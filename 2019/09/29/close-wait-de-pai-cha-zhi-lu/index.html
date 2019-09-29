@@ -4,9 +4,9 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="Hexo+Github搭建博客指南, Icecrea的博客">
-    <meta name="description" content="安装Nodejs安装Nodejs 稳定版：https://link.zhihu.com/?target=https%3A//nodejs.org/dist/v9.11.1/node-v9.11.1-x64.msi
-安装Hexo进入博客目录(">
+    <meta name="keywords" content="CLOSE-WAIT的排查之旅, Icecrea的博客">
+    <meta name="description" content="CLOSE-WAIT的排查之旅背景通过监控中发现，线上机器TCP连接中，CLOSE-WAIT状态的量较高。对该问题进行排查
+TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的状态变化如下图所示。从图中可以看到，主动关闭的一方会发出">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -14,7 +14,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Hexo+Github搭建博客指南 | Icecrea的博客</title>
+    <title>CLOSE-WAIT的排查之旅 | Icecrea的博客</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -287,13 +287,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/wallhaven-g8m6d7.png')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/wallhaven-r2pvww.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        Hexo+Github搭建博客指南
+                        CLOSE-WAIT的排查之旅
                     </div>
                 </div>
             </div>
@@ -404,8 +404,12 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/博客/" target="_blank">
-                                <span class="chip bg-color">博客</span>
+                            <a href="/tags/计算机网络/" target="_blank">
+                                <span class="chip bg-color">计算机网络</span>
+                            </a>
+                        
+                            <a href="/tags/TCP/" target="_blank">
+                                <span class="chip bg-color">TCP</span>
                             </a>
                         
                     </div>
@@ -416,8 +420,8 @@
                     <div class="post-cate">
                         <i class="fa fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/博客/" class="post-category" target="_blank">
-                                博客
+                            <a href="/categories/计算机网络/" class="post-category" target="_blank">
+                                计算机网络
                             </a>
                         
                     </div>
@@ -428,7 +432,7 @@
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-09-27
+                    2019-09-29
                 </div>
 
                 
@@ -444,26 +448,57 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="安装Nodejs"><a href="#安装Nodejs" class="headerlink" title="安装Nodejs"></a>安装Nodejs</h2><p>安装Nodejs 稳定版：<br><a href="https://link.zhihu.com/?target=https%3A//nodejs.org/dist/v9.11.1/node-v9.11.1-x64.msi" target="_blank" rel="noopener">https://link.zhihu.com/?target=https%3A//nodejs.org/dist/v9.11.1/node-v9.11.1-x64.msi</a></p>
-<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>进入博客目录(如e:/blog) 右键git bash<br>npm i hexo-cli -g安装Hexo<br>hexo -v验证是否安装成功。<br>hexo init初始化文件夹<br>npm install安装必备的组件。<br>hexo g生成静态网页，每次改动要生成一下<br>hexo s打开本地服务器预览，浏览器打开<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a></p>
-<p>修改博客根目录下的_config.yml文件，repositrory改成github上对应项目地址</p>
-<pre><code>deploy:
-  type: git
-  repository: git@github.com:icecrea/icecrea.github.io.git
-  branch: master</code></pre><h2 id="写文章，发布文章"><a href="#写文章，发布文章" class="headerlink" title="写文章，发布文章"></a>写文章，发布文章</h2><p>进入博客目录(如e:/blog) 右键git bash<br>安装扩展npm i hexo-deployer-git<br>输入hexo new post “article title”，新建文章<br>hexo d上传到github上</p>
-<h2 id="指定git账户名"><a href="#指定git账户名" class="headerlink" title="指定git账户名"></a>指定git账户名</h2><p>在_config.yml中设置</p>
-<pre><code># You can use this:
-deploy:
-  type: git
-  repo: &lt;repository url&gt;
-  branch: [branch]
-  message: [message]
-  name: [git user]
-  email: [git email]
-  extend_dirs: [extend directory]</code></pre><p>注意： 如果.deploy_git目录已经生成的情况下，需要删掉整个目录，再执行一次hexo d才行</p>
-<h2 id="主题更换"><a href="#主题更换" class="headerlink" title="主题更换"></a>主题更换</h2><p>项目推荐 ：<a href="https://github.com/blinkfox/hexo-theme-matery/blob/develop/README_CN.md" target="_blank" rel="noopener">https://github.com/blinkfox/hexo-theme-matery/blob/develop/README_CN.md</a></p>
-<p>参考： <a href="https://zhuanlan.zhihu.com/p/35668237" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/35668237</a></p>
+                <h2 id="CLOSE-WAIT的排查之旅"><a href="#CLOSE-WAIT的排查之旅" class="headerlink" title="CLOSE-WAIT的排查之旅"></a>CLOSE-WAIT的排查之旅</h2><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>通过监控中发现，线上机器TCP连接中，CLOSE-WAIT状态的量较高。对该问题进行排查</p>
+<h4 id="TCP基础介绍"><a href="#TCP基础介绍" class="headerlink" title="TCP基础介绍"></a>TCP基础介绍</h4><p>首先介绍下TCP连接的状态，四次挥手关闭连接的状态变化如下图所示。<br>从图中可以看到，<strong>主动关闭</strong>的一方会发出FIN包，被动关闭的一方响应ACK包，此时被动关闭的一方进入CLOSE-WAIT状态。如果一切正常，被动关闭的一方也会发出FIN包，进入LAST-ACK状态。<br><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/tcp_close_geek.jpg" alt></p>
+<p>通常情况下，服务器中CLOSE-WAIT状态停留时间很短，<strong>如果发现大量CLOSE-WAIT状态，说明被动关闭的一方没有及时发出FIN包</strong></p>
+<p>可能导致问题的原因：</p>
+<ul>
+<li>程序未正确释放资源</li>
+<li>客户端超时，主动关闭连接，同时服务器却没有正确释放连接</li>
+</ul>
+<blockquote>
+<p>举例一个场景：<br>服务器A会去请求服务器B上面的apache获取文件资源，正常情况下，如果请求成功，那么在抓取完资源后服务器A会主动发出关闭连接的请求，这个时候就是主动关闭连接，连接状态我们可以看到是TIME_WAIT。如果一旦发生异常呢？假设请求的资源服务器B上并不存在，那么这个时候就会由服务器B发出关闭连接的请求，服务器A就是被动的关闭了连接，如果服务器A被动关闭连接之后自己并没有释放连接，那就会造成CLOSE_WAIT的状态了。</p>
+</blockquote>
+<p>而对于JAVA项目来说，则需要重点观察HTTP相关调用与连接的释放。</p>
+<h4 id="代码层面白盒分析"><a href="#代码层面白盒分析" class="headerlink" title="代码层面白盒分析"></a>代码层面白盒分析</h4><p>一开始是从代码层面进行分析，我们使用了Http-Client连接池，<br>对于3.1的版本，我们使用了<code>MultiThreadedHttpConnectionManager</code>作为多线程管理器，并且在<code>finally</code>块中，调用了<code>HttpMethod#releaseConnection</code>方法，对连接进行释放，并没有发现问题。</p>
+<p>而因为使用了连接池复用的缘故，同样不建议采用手动关闭连接的形式。如</p>
+<ol>
+<li>通过设置header由服务端自动关闭。<code>method.setHeader(&quot;Connection&quot;, &quot;close&quot;)</code><br>HTTP1.1中默认启用Keep-Alive，这是HTTP一种连接复用机制，加入”Connection: close”会关闭长连接，无法在一个TCP连接进行多次HTTP会话，降低性能。</li>
+<li>在<code>method.releaseConnection()</code> 之后 通过获取HttpConnectionManager，进行关闭<code>hc.getConnectionManager().shutdown();</code>  直接关闭连接池，同样对性能影响较大不可取。</li>
+</ol>
+<h4 id="抓包分析定位请求"><a href="#抓包分析定位请求" class="headerlink" title="抓包分析定位请求"></a>抓包分析定位请求</h4><p>在代码中我们发现使用了HttpClient进行网络请求，但是用法与调用比较混乱，3.x，4.x，以及公司封装版本均有使用，仅仅白盒分析难以发现问题。所以通过tcpdump对线上机器进行抓包分析。</p>
+<ol>
+<li>dump所有tcp报文到文件<br><code>sudo tcpdump  -nn -w flightorder.pcap -v</code></li>
+<li>查看监控，在closewait的上升期，查询最新的连接信息<br><code>sudo netstat -anp |grep CL</code></li>
+<li>通过最新的close-wait 端口 查看tcp的信息<br><code>tcpdump -r flightorder.pcap |grep &#39;35493&#39;</code></li>
+</ol>
+<p>通过报文中的http请求，锁定应用级别相关api</p>
+<h4 id="一行代码的低级错误"><a href="#一行代码的低级错误" class="headerlink" title="一行代码的低级错误"></a>一行代码的低级错误</h4><p>定位代码发现，在该处调用中，封装了post相关请求，但是在该方法中，每次调用均重新生成了新的HttpClient，而不是公共静态的httpclient。意味着每一次请求均会生成一个新的连接池进行处理。将实例化代码抽出后发布，发现CLOSE-WAIT量消失，问题解决。</p>
+<h4 id="Http的Keep-alive机制"><a href="#Http的Keep-alive机制" class="headerlink" title="Http的Keep-alive机制"></a>Http的Keep-alive机制</h4><p>定位解决了问题，但是还有一些疑问，<strong>主动方是如何触发的关闭呢？</strong></p>
+<p>这里就需要先普及下Http keepalive机制。Http的Keep alive是一种TCP连接复用机制，在同一个TCP连接上传送多个HTTP，提高Socket的效率。而TCP的keep-alive是TCP的一种检测TCP连接状况的保鲜机制，注意两者区分。</p>
+<p>Http1.1之前（未显示指定Connection:keep-alive）每个http请求都要求打开一个tcp socket连接，并且使用一次之后就断开这个tcp连接。对于如今这种一个页面少则几个多则几十几百个的请求的现状来说这显然不是一种高效的使用方式，http1.1之后默认开启keep-alive，通过使用keep-alive机制，可以减少tcp连接建立次数，以此提高性能和提高http服务器的吞吐率(更少的tcp连接意味着更少的系统内核调用,socket的accept()和close()调用。</p>
+<p>然而keep-alive如果配置不当同样存在风险，长时间的tcp连接容易导致系统资源无效占用。正确地设置keep-alive timeout时间非常重要。那么是否是因为keep-alive超时，发起的主动关闭连接呢？结合tcpdump结果分析</p>
+<p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/closewait%E6%8A%93%E5%8C%85%E7%BB%93%E6%9E%9C.png" alt></p>
+<p>此处我使用wireshark，对上面的抓包结果分析，从图中圈红部分我们可以发现，最后一次ACK和发起主动关闭间隔30s，多个case结果均相同。那么对应的远程主机，也就是ng的keep-alive timeout应该是30，跟运维确认ng配置，得到验证<code>keepalive_timeout  30;  client_body_timeout 30s; client_header_timeout 30s;</code></p>
+<h4 id="TCP连接与Finalize机制"><a href="#TCP连接与Finalize机制" class="headerlink" title="TCP连接与Finalize机制"></a>TCP连接与Finalize机制</h4><p>在观察监控时，还发现一个奇怪的现象，每过5分钟，CLOSE-WAIT的量变断崖式下降。第一反应是否是系统GC掉了？观察GC日志，发现时间点吻合。CLOSE_WAIT变更为LAST_ACK的tcp连接，同时都伴随着gc的发生。</p>
+<p>为什么gc会导致tcp连接的关闭呢？这是就不得不提java的finalize机制。</p>
+<blockquote>
+<p>finalize()方法的工作原理：<br>触发gc时，一旦垃圾回收器准备好释放对象占用的存储空间，如果该对象未重写finalize()方法则可以直接回收，否则会去调用finalize()方法进行一些必要的清理工作。只有到下一次再进行垃圾回收动作的时候，才会真正释放这个对象所占用的内存空间。</p>
+</blockquote>
+<blockquote>
+<p>假定你的对象（并非使用new方法）获得了一块“特殊”的内存区域，由于垃圾回收器只知道那些显示地经由new分配的内存空间，所以它不知道该如何释放这块“特殊”的内存区域，那么这个时候java允许在类中定义一个由finalize()方法，通过这个方法安全的回收“特殊”区域，特殊区域如文件(如java.util.zip.ZipFile)、流(如org.apache.commons.io.input.AutoCloseInputStream)、管道(如java.net.AbstractPlainSocketImpl)等。</p>
+</blockquote>
+<p>apache的httpclient的使用的就是<code>java.net.AbstractPlainSocketImpl</code>(调用的是<code>java.net.SocksSocketImpl，AbstractPlainSocketImpl</code>的子类)中的关闭方法</p>
+<pre><code>protected void finalize() throws IOException {
+    close();
+}
 
+protected void close() throws IOException {
+    if (cmdsock != null)
+        cmdsock.close();
+    cmdsock = null;
+    super.close();
+}</code></pre>
             </div>
             <hr/>
 
@@ -621,9 +656,9 @@ deploy:
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《Hexo+Github搭建博客指南》
+                    《CLOSE-WAIT的排查之旅》
                 </span> 由
-            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/09/27/da-jian-bo-ke/" property="cc:attributionName"
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/09/29/close-wait-de-pai-cha-zhi-lu/" property="cc:attributionName"
                rel="cc:attributionURL">
                 icecrea
             </a> 采用
@@ -663,9 +698,10 @@ deploy:
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2019/09/29/close-wait-de-pai-cha-zhi-lu/">
                     <div class="card-image">
@@ -682,9 +718,9 @@ deploy:
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-29
-                        </span>
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-29
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
@@ -697,6 +733,7 @@ deploy:
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -716,7 +753,7 @@ deploy:
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="fa fa-dot-circle-o"></i>
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
                 <a href="/2019/09/27/da-jian-bo-ke/">
@@ -749,7 +786,6 @@ deploy:
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
