@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>JVM问题排查指令总结</title>
+      <link href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/"/>
+      <url>/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/</url>
+      
+        <content type="html"><![CDATA[<h2 id="JVM问题排查指令总结"><a href="#JVM问题排查指令总结" class="headerlink" title="JVM问题排查指令总结"></a>JVM问题排查指令总结</h2><h4 id="常用分析指令"><a href="#常用分析指令" class="headerlink" title="常用分析指令"></a>常用分析指令</h4><ol><li><p>查看各个类的实例大小与个数<br><code>sudo -u tomcat jmap -histo pid</code></p></li><li><p>DUMP内存，获取对应的内存快照<br><code>sudo -u tomcat jmap -dump:format=b,file=dumpxx.bin pid</code> </p></li><li><p>CPU飙高排查线程信息<br><code>top -Hp pid</code> 查看Java进程信息 p : 根据CPU使用百分比大小进行排序<br><code>printf &quot;%x\n&quot; 21742</code> 将CPU高的线程ID转换成十六进制<br><code>sudo -u tomcat jstack -l 21711 | grep 54ee</code> 查看线程栈中对应CPU高的线程信息</p></li><li><p>统计进程状态个数<br><code>sudo -utomcat jstack 5020 |grep &#39;java.lang.Thread.State&#39; | awk &#39;{print $2,$3,$4,$5}&#39; | sort | uniq -c</code></p><pre><code>36 RUNNABLE3 TIMED_WAITING (on object monitor)13 TIMED_WAITING (parking)6 TIMED_WAITING (sleeping)3 WAITING (on object monitor)47 WAITING (parking)</code></pre></li></ol><hr><h4 id="MAT-使用简介"><a href="#MAT-使用简介" class="headerlink" title="MAT 使用简介"></a>MAT 使用简介</h4><p>Shallow Heap ：一个对象内存的消耗大小，不包含对其他对象的引用；<br>Retained Heap ：是shallow Heap的总和，也就是该对象被GC之后所能回收的内存大小<br>在某一项上右键打开菜单选择 list objects ：<br>with incoming references 将列出哪些类引入该类；<br>with outgoing references 列出该类引用了哪些类</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> JVM </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> JVM </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>CLOSE-WAIT的排查之旅</title>
       <link href="/2019/09/29/close-wait-de-pai-cha-zhi-lu/"/>
       <url>/2019/09/29/close-wait-de-pai-cha-zhi-lu/</url>

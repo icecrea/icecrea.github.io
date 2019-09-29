@@ -4,9 +4,11 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="Hexo+Github搭建博客指南, icecrea">
-    <meta name="description" content="安装Nodejs安装Nodejs 稳定版：https://link.zhihu.com/?target=https%3A//nodejs.org/dist/v9.11.1/node-v9.11.1-x64.msi
-安装Hexo进入博客目录(">
+    <meta name="keywords" content="JVM问题排查指令总结, icecrea">
+    <meta name="description" content="JVM问题排查指令总结常用分析指令
+查看各个类的实例大小与个数sudo -u tomcat jmap -histo pid
+
+DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=d">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -14,7 +16,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Hexo+Github搭建博客指南 | icecrea</title>
+    <title>JVM问题排查指令总结 | icecrea</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -287,13 +289,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/wallhaven-g8m6d7.png')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-ey61zo.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        Hexo+Github搭建博客指南
+                        JVM问题排查指令总结
                     </div>
                 </div>
             </div>
@@ -404,8 +406,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/博客/" target="_blank">
-                                <span class="chip bg-color">博客</span>
+                            <a href="/tags/JVM/" target="_blank">
+                                <span class="chip bg-color">JVM</span>
                             </a>
                         
                     </div>
@@ -416,8 +418,8 @@
                     <div class="post-cate">
                         <i class="fa fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/博客/" class="post-category" target="_blank">
-                                博客
+                            <a href="/categories/JVM/" class="post-category" target="_blank">
+                                JVM
                             </a>
                         
                     </div>
@@ -428,14 +430,14 @@
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-09-27
+                    2019-09-29
                 </div>
 
                 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        286
+                        278
                     </div>
                     
 
@@ -458,25 +460,23 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="安装Nodejs"><a href="#安装Nodejs" class="headerlink" title="安装Nodejs"></a>安装Nodejs</h2><p>安装Nodejs 稳定版：<br><a href="https://link.zhihu.com/?target=https%3A//nodejs.org/dist/v9.11.1/node-v9.11.1-x64.msi" target="_blank" rel="noopener">https://link.zhihu.com/?target=https%3A//nodejs.org/dist/v9.11.1/node-v9.11.1-x64.msi</a></p>
-<h2 id="安装Hexo"><a href="#安装Hexo" class="headerlink" title="安装Hexo"></a>安装Hexo</h2><p>进入博客目录(如e:/blog) 右键git bash<br>npm i hexo-cli -g安装Hexo<br>hexo -v验证是否安装成功。<br>hexo init初始化文件夹<br>npm install安装必备的组件。<br>hexo g生成静态网页，每次改动要生成一下<br>hexo s打开本地服务器预览，浏览器打开<a href="http://localhost:4000/" target="_blank" rel="noopener">http://localhost:4000/</a></p>
-<p>修改博客根目录下的_config.yml文件，repositrory改成github上对应项目地址</p>
-<pre><code>deploy:
-  type: git
-  repository: git@github.com:icecrea/icecrea.github.io.git
-  branch: master</code></pre><h2 id="写文章，发布文章"><a href="#写文章，发布文章" class="headerlink" title="写文章，发布文章"></a>写文章，发布文章</h2><p>进入博客目录(如e:/blog) 右键git bash<br>安装扩展npm i hexo-deployer-git<br>输入hexo new post “article title”，新建文章<br>hexo d上传到github上</p>
-<h2 id="指定git账户名"><a href="#指定git账户名" class="headerlink" title="指定git账户名"></a>指定git账户名</h2><p>在_config.yml中设置</p>
-<pre><code># You can use this:
-deploy:
-  type: git
-  repo: &lt;repository url&gt;
-  branch: [branch]
-  message: [message]
-  name: [git user]
-  email: [git email]
-  extend_dirs: [extend directory]</code></pre><p>注意： 如果.deploy_git目录已经生成的情况下，需要删掉整个目录，再执行一次hexo d才行</p>
-<h2 id="主题更换"><a href="#主题更换" class="headerlink" title="主题更换"></a>主题更换</h2><p>项目推荐 ：<a href="https://github.com/blinkfox/hexo-theme-matery/blob/develop/README_CN.md" target="_blank" rel="noopener">https://github.com/blinkfox/hexo-theme-matery/blob/develop/README_CN.md</a></p>
-<p>参考： <a href="https://zhuanlan.zhihu.com/p/35668237" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/35668237</a></p>
+                <h2 id="JVM问题排查指令总结"><a href="#JVM问题排查指令总结" class="headerlink" title="JVM问题排查指令总结"></a>JVM问题排查指令总结</h2><h4 id="常用分析指令"><a href="#常用分析指令" class="headerlink" title="常用分析指令"></a>常用分析指令</h4><ol>
+<li><p>查看各个类的实例大小与个数<br><code>sudo -u tomcat jmap -histo pid</code></p>
+</li>
+<li><p>DUMP内存，获取对应的内存快照<br><code>sudo -u tomcat jmap -dump:format=b,file=dumpxx.bin pid</code> </p>
+</li>
+<li><p>CPU飙高排查线程信息<br><code>top -Hp pid</code> 查看Java进程信息 p : 根据CPU使用百分比大小进行排序<br><code>printf &quot;%x\n&quot; 21742</code> 将CPU高的线程ID转换成十六进制<br><code>sudo -u tomcat jstack -l 21711 | grep 54ee</code> 查看线程栈中对应CPU高的线程信息</p>
+</li>
+<li><p>统计进程状态个数<br><code>sudo -utomcat jstack 5020 |grep &#39;java.lang.Thread.State&#39; | awk &#39;{print $2,$3,$4,$5}&#39; | sort | uniq -c</code></p>
+<pre><code>36 RUNNABLE
+3 TIMED_WAITING (on object monitor)
+13 TIMED_WAITING (parking)
+6 TIMED_WAITING (sleeping)
+3 WAITING (on object monitor)
+47 WAITING (parking)</code></pre></li>
+</ol>
+<hr>
+<h4 id="MAT-使用简介"><a href="#MAT-使用简介" class="headerlink" title="MAT 使用简介"></a>MAT 使用简介</h4><p>Shallow Heap ：一个对象内存的消耗大小，不包含对其他对象的引用；<br>Retained Heap ：是shallow Heap的总和，也就是该对象被GC之后所能回收的内存大小<br>在某一项上右键打开菜单选择 list objects ：<br>with incoming references 将列出哪些类引入该类；<br>with outgoing references 列出该类引用了哪些类</p>
 
             </div>
             <hr/>
@@ -635,9 +635,9 @@ deploy:
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《Hexo+Github搭建博客指南》
+                    《JVM问题排查指令总结》
                 </span> 由
-            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/09/27/da-jian-bo-ke/" property="cc:attributionName"
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/" property="cc:attributionName"
                rel="cc:attributionURL">
                 icecrea
             </a> 采用
@@ -677,9 +677,59 @@ deploy:
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/">
+                    <div class="card-image">
+                        
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-ey61zo.jpg" class="responsive-img" alt="JVM问题排查指令总结">
+                        
+                        <span class="card-title">JVM问题排查指令总结</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            总结排查JVM,GC,CPU飙高等相关问题的常用指令
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-29
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/JVM/" class="post-category" target="_blank">
+                                    JVM
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/JVM/" target="_blank">
+                        <span class="chip bg-color">JVM</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/2019/09/29/close-wait-de-pai-cha-zhi-lu/">
                     <div class="card-image">
@@ -696,9 +746,9 @@ deploy:
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-29
-                        </span>
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-29
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
@@ -720,55 +770,6 @@ deploy:
                     
                     <a href="/tags/TCP/" target="_blank">
                         <span class="chip bg-color">TCP</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="fa fa-dot-circle-o"></i>
-            </div>
-            <div class="card">
-                <a href="/2019/09/27/da-jian-bo-ke/">
-                    <div class="card-image">
-                        
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/wallhaven-g8m6d7.png" class="responsive-img" alt="Hexo+Github搭建博客指南">
-                        
-                        <span class="card-title">Hexo+Github搭建博客指南</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            五分钟搭建github专属博客
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-27
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fa fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/博客/" class="post-category" target="_blank">
-                                    博客
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/博客/" target="_blank">
-                        <span class="chip bg-color">博客</span>
                     </a>
                     
                 </div>
