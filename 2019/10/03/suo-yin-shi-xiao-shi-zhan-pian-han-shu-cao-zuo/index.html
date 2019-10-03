@@ -4,11 +4,9 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="JVM问题排查指令总结, icecrea">
-    <meta name="description" content="JVM问题排查指令总结常用分析指令
-查看各个类的实例大小与个数sudo -u tomcat jmap -histo pid
-
-DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=d">
+    <meta name="keywords" content="索引失效实战篇 - 函数操作, icecrea">
+    <meta name="description" content="索引失效实战篇 - 函数操作1、 条件字段函数操作mysql&amp;gt; select count(*) from tradelog where month(t_modified)=7;
+B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -16,7 +14,7 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>JVM问题排查指令总结 | icecrea</title>
+    <title>索引失效实战篇 - 函数操作 | icecrea</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -289,13 +287,13 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-ey61zo.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/文章封面/wallhaven-j5yj5p.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        JVM问题排查指令总结
+                        索引失效实战篇 - 函数操作
                     </div>
                 </div>
             </div>
@@ -406,8 +404,12 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/JVM/" target="_blank">
-                                <span class="chip bg-color">JVM</span>
+                            <a href="/tags/MYSQL/" target="_blank">
+                                <span class="chip bg-color">MYSQL</span>
+                            </a>
+                        
+                            <a href="/tags/索引/" target="_blank">
+                                <span class="chip bg-color">索引</span>
                             </a>
                         
                     </div>
@@ -418,8 +420,8 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
                     <div class="post-cate">
                         <i class="fa fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/JVM/" class="post-category" target="_blank">
-                                JVM
+                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
+                                MYSQL
                             </a>
                         
                     </div>
@@ -430,21 +432,21 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-09-29
+                    2019-10-03
                 </div>
 
                 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        278
+                        948
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        1 分
+                        3 分
                     </div>
                     
                 
@@ -460,23 +462,30 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="JVM问题排查指令总结"><a href="#JVM问题排查指令总结" class="headerlink" title="JVM问题排查指令总结"></a>JVM问题排查指令总结</h2><h4 id="常用分析指令"><a href="#常用分析指令" class="headerlink" title="常用分析指令"></a>常用分析指令</h4><ol>
-<li><p>查看各个类的实例大小与个数<br><code>sudo -u tomcat jmap -histo pid</code></p>
-</li>
-<li><p>DUMP内存，获取对应的内存快照<br><code>sudo -u tomcat jmap -dump:format=b,file=dumpxx.bin pid</code> </p>
-</li>
-<li><p>CPU飙高排查线程信息<br><code>top -Hp pid</code> 查看Java进程信息 p : 根据CPU使用百分比大小进行排序<br><code>printf &quot;%x\n&quot; 21742</code> 将CPU高的线程ID转换成十六进制<br><code>sudo -u tomcat jstack -l 21711 | grep 54ee</code> 查看线程栈中对应CPU高的线程信息</p>
-</li>
-<li><p>统计进程状态个数<br><code>sudo -utomcat jstack 5020 |grep &#39;java.lang.Thread.State&#39; | awk &#39;{print $2,$3,$4,$5}&#39; | sort | uniq -c</code></p>
-<pre><code>36 RUNNABLE
-3 TIMED_WAITING (on object monitor)
-13 TIMED_WAITING (parking)
-6 TIMED_WAITING (sleeping)
-3 WAITING (on object monitor)
-47 WAITING (parking)</code></pre></li>
+                <h2 id="索引失效实战篇-函数操作"><a href="#索引失效实战篇-函数操作" class="headerlink" title="索引失效实战篇 - 函数操作"></a>索引失效实战篇 - 函数操作</h2><h4 id="1、-条件字段函数操作"><a href="#1、-条件字段函数操作" class="headerlink" title="1、 条件字段函数操作"></a>1、 条件字段函数操作</h4><p><code>mysql&gt; select count(*) from tradelog where month(t_modified)=7;</code></p>
+<p>B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有序性。<strong>对索引字段做函数操作，可能会破坏索引值的有序性，因此优化器就决定放弃走树搜索功能</strong>。注意：优化器并不是要放弃使用这个索引。对比索引大小选择更小的索引。加了 month() 函数操作，MySQL 无法再使用索引快速定位功能，而只能使用全索引扫描。</p>
+<p>优化器在个问题上确实有“偷懒”行为，即使是对于不改变有序性的函数，也不会考虑使用索引。比如，对于 <code>select * from tradelog where id + 1 = 10000</code></p>
+<h4 id="2、-隐式类型转换"><a href="#2、-隐式类型转换" class="headerlink" title="2、 隐式类型转换"></a>2、 隐式类型转换</h4><p><code>select * from tradelog where tradeid=110717;</code><br>tradeid 的字段类型是 varchar(32)，而输入的参数却是整型，所以需要做类型转换。</p>
+<p>数据类型转换的规则是什么？有一个简单的方法，看 select “10” &gt; 9 的结果</p>
+<pre><code>1. 如果规则是“将字符串转成数字”，那么就是做数字比较，结果应该是 1
+2. 如果规则是“将数字转成字符串”，那么就是做字符串比较，结果应该是 </code></pre><p>验证结果为1，所以在MYSQL中是将<strong>字符串转换成数字</strong><br>对于优化器来说，上面操作等于<code>select * from tradelog where CAST(tradid AS signed int) = 110717;</code>符合上面规则，<strong>对索引字段做函数操作，优化器会放弃走树搜索功能</strong></p>
+<p>注意：<code>select * from tradelog where id=&quot;83126&quot;;</code>该case中，id是int类型，不会导致全表扫描。因为是字符串转整数，所以会先将入参83126转化成数字，在进入索引搜索。</p>
+<h4 id="3、隐式字符编码转换"><a href="#3、隐式字符编码转换" class="headerlink" title="3、隐式字符编码转换"></a>3、隐式字符编码转换</h4><p><code>select d.* from tradelog l, trade_detail d where d.tradeid=l.tradeid and l.id=2;</code><br>链表查询交易记录标和详情表，通过tradeid关联，tradedetail是utf8编码，tradelog是utf8mb4。<br>查询分析结果如下：<br><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/lianbiaochaxun.png" alt></p>
+<pre><code>1. 第一行显示优化器会先在交易记录表 tradelog 上查到 id=2 的行，这个步骤用上了主键索引，rows=1 表示只扫描一行
+2. 第二行 key=NULL，表示没有用上交易详情表 trade_detail 上的 tradeid 索引，进行了全表扫描</code></pre><p>表 trade_detail 里 tradeid 字段上是有索引的，为什么没有使用？因为这两个表的字符集不同，一个是 utf8，一个是 utf8mb4，所以做表连接查询的时候用不上关联字段的索引。那为什么字符集不同就用不上索引呢？</p>
+<blockquote>
+<p>字符集 utf8mb4 是 utf8 的超集，所以当这两个类型的字符串在做比较的时候，MySQL 内部的操作是，先把 utf8 字符串转成 utf8mb4 字符集，再做比较。可以理解为=“按数据长度增加的方向”进行转换。</p>
+</blockquote>
+<p>实际上等同如下写法：<br><code>select * from trade_detail where CONVERT(traideid USING utf8mb4)=$L2.tradeid.value</code></p>
+<p><strong>连接过程中要求在被驱动表的索引字段上加函数操作</strong>，是直接导致对被驱动表做全表扫描的原因。</p>
+<p>对比验证<code>select l.operator from tradelog l , trade_detail d where d.tradeid=l.tradeid and d.id=4;</code><br>此时转换成<code>select operator from tradelog where traideid =CONVERT($R4.tradeid.value USING utf8mb4);</code>CONVERT 函数是加在输入参数上的，这样就可以用上被驱动表的 traideid 索引。</p>
+<p>第一种查询的解决方案：</p>
+<ol>
+<li>转换成utf8mb4</li>
+<li>修改SQL语句 <code>select d.* from tradelog l , trade_detail d where d.tradeid=CONVERT(l.tradeid USING utf8) and l.id=2;</code></li>
 </ol>
-<hr>
-<h4 id="MAT-使用简介"><a href="#MAT-使用简介" class="headerlink" title="MAT 使用简介"></a>MAT 使用简介</h4><p>Shallow Heap ：一个对象内存的消耗大小，不包含对其他对象的引用；<br>Retained Heap ：是shallow Heap的总和，也就是该对象被GC之后所能回收的内存大小<br>在某一项上右键打开菜单选择 list objects ：<br>with incoming references 将列出哪些类引入该类；<br>with outgoing references 列出该类引用了哪些类</p>
+<h4 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h4><p><strong>对索引字段做函数操作，可能会破坏索引值的有序性，因此优化器就决定放弃走树搜索功能。</strong></p>
+<p>参考：<br>丁奇：MYSQL实战45讲</p>
 
             </div>
             <hr/>
@@ -635,9 +644,9 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《JVM问题排查指令总结》
+                    《索引失效实战篇 - 函数操作》
                 </span> 由
-            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/" property="cc:attributionName"
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/03/suo-yin-shi-xiao-shi-zhan-pian-han-shu-cao-zuo/" property="cc:attributionName"
                rel="cc:attributionURL">
                 icecrea
             </a> 采用
@@ -681,18 +690,18 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
             <div class="article-badge left-badge text-color">
                 <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/03/suo-yin-shi-xiao-shi-zhan-pian-han-shu-cao-zuo/">
+                <a href="/2019/10/03/mysql-suo/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/文章封面/wallhaven-j5yj5p.jpg" class="responsive-img" alt="索引失效实战篇 - 函数操作">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-g8qpll.jpg" class="responsive-img" alt="Mysql锁">
                         
-                        <span class="card-title">索引失效实战篇 - 函数操作</span>
+                        <span class="card-title">Mysql锁</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            涉及三个案例，条件字段函数操作，隐式类型转换，隐式字符编码转换。对索引字段做函数操作，可能会破坏索引值的有序性，优化器就决定放弃走树搜索功能。
+                            Mysql中三类锁：全局锁、表级锁（表索、MDL锁）、行锁。死锁以及死锁检测。
                         
                     </div>
                     <div class="publish-info">
@@ -718,10 +727,6 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
                         <span class="chip bg-color">MYSQL</span>
                     </a>
                     
-                    <a href="/tags/索引/" target="_blank">
-                        <span class="chip bg-color">索引</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -733,18 +738,18 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/09/29/close-wait-de-pai-cha-zhi-lu/">
+                <a href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/wallhaven-r2pvww.jpg" class="responsive-img" alt="CLOSE-WAIT的排查之旅">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-ey61zo.jpg" class="responsive-img" alt="JVM问题排查指令总结">
                         
-                        <span class="card-title">CLOSE-WAIT的排查之旅</span>
+                        <span class="card-title">JVM问题排查指令总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            一次排查线上CLOSE-WAIT问题的全过程，对调查中遇到的问题点逐一详细分析。涉及TCP基础、抓包、HTTP-KEEPALVIE机制、连接池、垃圾回收等相关知识。
+                            总结排查JVM,GC,CPU飙高等相关问题的常用指令
                         
                     </div>
                     <div class="publish-info">
@@ -755,8 +760,8 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/计算机网络/" class="post-category" target="_blank">
-                                    计算机网络
+                            <a href="/categories/JVM/" class="post-category" target="_blank">
+                                    JVM
                                 </a>
                             
                             
@@ -766,12 +771,8 @@ DUMP内存，获取对应的内存快照sudo -u tomcat jmap -dump:format=b,file=
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/计算机网络/" target="_blank">
-                        <span class="chip bg-color">计算机网络</span>
-                    </a>
-                    
-                    <a href="/tags/TCP/" target="_blank">
-                        <span class="chip bg-color">TCP</span>
+                    <a href="/tags/JVM/" target="_blank">
+                        <span class="chip bg-color">JVM</span>
                     </a>
                     
                 </div>
