@@ -4,9 +4,11 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="CLOSE-WAIT的排查之旅, icecrea">
-    <meta name="description" content="CLOSE-WAIT的排查之旅背景通过监控中发现，线上机器TCP连接中，CLOSE-WAIT状态的量较高。对该问题进行排查
-TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的状态变化如下图所示。从图中可以看到，主动关闭的一方会发出">
+    <meta name="keywords" content="Mysql索引, icecrea">
+    <meta name="description" content="Mysql索引索引模型
+哈希表 适用于只有等值查询的场景。不支持最左匹配规则，没办法利用索引完成排序，无法进行范围查询。如果有大量重复键值得情况下，存在哈希碰撞问题
+有序数组有序数组索引只适用于静态存储引擎。查询效率高，但更新数据成本高。
+">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -14,7 +16,7 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>CLOSE-WAIT的排查之旅 | icecrea</title>
+    <title>Mysql索引 | icecrea</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -287,13 +289,13 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/wallhaven-r2pvww.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kw1ky1.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        CLOSE-WAIT的排查之旅
+                        Mysql索引
                     </div>
                 </div>
             </div>
@@ -404,12 +406,12 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/计算机网络/" target="_blank">
-                                <span class="chip bg-color">计算机网络</span>
+                            <a href="/tags/MYSQL/" target="_blank">
+                                <span class="chip bg-color">MYSQL</span>
                             </a>
                         
-                            <a href="/tags/TCP/" target="_blank">
-                                <span class="chip bg-color">TCP</span>
+                            <a href="/tags/索引/" target="_blank">
+                                <span class="chip bg-color">索引</span>
                             </a>
                         
                     </div>
@@ -420,8 +422,8 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
                     <div class="post-cate">
                         <i class="fa fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/计算机网络/" class="post-category" target="_blank">
-                                计算机网络
+                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
+                                MYSQL
                             </a>
                         
                     </div>
@@ -432,7 +434,7 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-09-29
+                    2019-10-06
                 </div>
 
                 
@@ -462,57 +464,47 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="CLOSE-WAIT的排查之旅"><a href="#CLOSE-WAIT的排查之旅" class="headerlink" title="CLOSE-WAIT的排查之旅"></a>CLOSE-WAIT的排查之旅</h2><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>通过监控中发现，线上机器TCP连接中，CLOSE-WAIT状态的量较高。对该问题进行排查</p>
-<h4 id="TCP基础介绍"><a href="#TCP基础介绍" class="headerlink" title="TCP基础介绍"></a>TCP基础介绍</h4><p>首先介绍下TCP连接的状态，四次挥手关闭连接的状态变化如下图所示。<br>从图中可以看到，<strong>主动关闭</strong>的一方会发出FIN包，被动关闭的一方响应ACK包，此时被动关闭的一方进入CLOSE-WAIT状态。如果一切正常，被动关闭的一方也会发出FIN包，进入LAST-ACK状态。<br><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/tcp_close_geek.jpg" alt></p>
-<p>通常情况下，服务器中CLOSE-WAIT状态停留时间很短，<strong>如果发现大量CLOSE-WAIT状态，说明被动关闭的一方没有及时发出FIN包</strong></p>
-<p>可能导致问题的原因：</p>
+                <h2 id="Mysql索引"><a href="#Mysql索引" class="headerlink" title="Mysql索引"></a>Mysql索引</h2><h3 id="索引模型"><a href="#索引模型" class="headerlink" title="索引模型"></a>索引模型</h3><ol>
+<li>哈希表<br> 适用于只有等值查询的场景。不支持最左匹配规则，没办法利用索引完成排序，无法进行范围查询。如果有大量重复键值得情况下，存在哈希碰撞问题</li>
+<li>有序数组<br>有序数组索引只适用于静态存储引擎。查询效率高，但更新数据成本高。</li>
+<li>搜索树<br>二叉树是搜索效率最高的，但是实际上大多数的数据库存储却并不使用二叉树。其原因是，索引不止存在内存中，还要写到磁盘上。<blockquote>
+<p>一棵 100 万节点的平衡二叉树，树高 20。一次查询可能需要访问 20 个数据块。在机械硬盘时代，从磁盘随机读一个数据块需要 10 ms 左右的寻址时间。也就是说，对于一个 100 万行的表，如果使用二叉树来存储，单独访问一个行可能需要 20 个 10 ms 的时间</p>
+</blockquote>
+</li>
+</ol>
+<p>为了让一个查询尽量少地读磁盘，就必须让查询过程访问尽量少的数据块。使用“N 叉”树。这里，“N 叉”树中的“N”取决于数据块的大小。</p>
+<blockquote>
+<p>以 InnoDB 的一个整数字段索引为例，这个 N 差不多是 1200。这棵树高是 4 的时候，就可以存 1200 的 3 次方个值，这已经 17 亿了。考虑到树根的数据块总是在内存中的，一个 10 亿行的表上一个整数字段的索引，查找一个值最多只需要访问 3 次磁盘。其实，树的第二层也有很大概率在内存中，那么访问磁盘的平均次数就更少了。</p>
+</blockquote>
+<h3 id="InnoDB-的索引模型"><a href="#InnoDB-的索引模型" class="headerlink" title="InnoDB 的索引模型"></a>InnoDB 的索引模型</h3><p>在 InnoDB 中，表都是根据主键顺序以索引的形式存放的，这种存储方式的表称为索引组织表。又因为前面我们提到的，InnoDB 使用了 B+ 树索引模型，所以数据都是存储在 B+ 树中的。<br>每一个索引在 InnoDB 里面对应一棵 B+ 树。</p>
+<p>根据叶子节点的内容，索引类型分为主键索引和非主键索引。</p>
 <ul>
-<li>程序未正确释放资源</li>
-<li>客户端超时，主动关闭连接，同时服务器却没有正确释放连接</li>
+<li>主键索引的叶子节点存的是整行数据，也被称为聚簇索引。</li>
+<li>非主键索引的叶子节点内容是主键的值，非主键索引也被称为二级索引。 </li>
 </ul>
-<blockquote>
-<p>举例一个场景：<br>服务器A会去请求服务器B上面的apache获取文件资源，正常情况下，如果请求成功，那么在抓取完资源后服务器A会主动发出关闭连接的请求，这个时候就是主动关闭连接，连接状态我们可以看到是TIME_WAIT。如果一旦发生异常呢？假设请求的资源服务器B上并不存在，那么这个时候就会由服务器B发出关闭连接的请求，服务器A就是被动的关闭了连接，如果服务器A被动关闭连接之后自己并没有释放连接，那就会造成CLOSE_WAIT的状态了。</p>
-</blockquote>
-<p>而对于JAVA项目来说，则需要重点观察HTTP相关调用与连接的释放。</p>
-<h4 id="代码层面白盒分析"><a href="#代码层面白盒分析" class="headerlink" title="代码层面白盒分析"></a>代码层面白盒分析</h4><p>一开始是从代码层面进行分析，我们使用了Http-Client连接池，<br>对于3.1的版本，我们使用了<code>MultiThreadedHttpConnectionManager</code>作为多线程管理器，并且在<code>finally</code>块中，调用了<code>HttpMethod#releaseConnection</code>方法，对连接进行释放，并没有发现问题。</p>
-<p>而因为使用了连接池复用的缘故，同样不建议采用手动关闭连接的形式。如</p>
+<p>基于非主键索引的查询需要多扫描一棵索引树。</p>
+<h3 id="索引维护"><a href="#索引维护" class="headerlink" title="索引维护"></a>索引维护</h3><p>B+ 树为了维护索引有序性，在插入新值的时候做必要的维护。如果是递增插入只需要在最大记录后面插入新记录。其它情况，需要逻辑上移动后面数据。如果插入位置所在数据页满了，会申请新数据页挪动部分数据过去，称为<strong>页分裂</strong>，影响性能和数据页的利用率。</p>
+<p>为什么普遍要求建表语句里一定要有自增主键？<code>NOT NULL PRIMARY KEY AUTO_INCREMENT</code></p>
 <ol>
-<li>通过设置header由服务端自动关闭。<code>method.setHeader(&quot;Connection&quot;, &quot;close&quot;)</code><br>HTTP1.1中默认启用Keep-Alive，这是HTTP一种连接复用机制，加入”Connection: close”会关闭长连接，无法在一个TCP连接进行多次HTTP会话，降低性能。</li>
-<li>在<code>method.releaseConnection()</code> 之后 通过获取HttpConnectionManager，进行关闭<code>hc.getConnectionManager().shutdown();</code>  直接关闭连接池，同样对性能影响较大不可取。</li>
+<li>性能角度<br>自增主键的插入数据模式，符合递增插入的场景。每次插入一条新记录，都是追加操作，都不涉及到挪动其他记录，也不会触发叶子节点的分裂。而有业务逻辑的字段做主键，则往往不容易保证有序插入，这样写数据成本相对较高</li>
+<li>存储空间角度<br>假设你的表中确实有一个唯一字段，比如字符串类型的身份证号。由于每个非主键索引的叶子节点上都是主键的值。如果用身份证号做主键，那么每个二级索引的叶子节点占用约 20 个字节，而如果用整型做主键，则只要 4 个字节，如果是长整型（bigint）则是 8 个字节。</li>
 </ol>
-<h4 id="抓包分析定位请求"><a href="#抓包分析定位请求" class="headerlink" title="抓包分析定位请求"></a>抓包分析定位请求</h4><p>在代码中我们发现使用了HttpClient进行网络请求，但是用法与调用比较混乱，3.x，4.x，以及公司封装版本均有使用，仅仅白盒分析难以发现问题。所以通过tcpdump对线上机器进行抓包分析。</p>
-<ol>
-<li>dump所有tcp报文到文件<br><code>sudo tcpdump  -nn -w flightorder.pcap -v</code></li>
-<li>查看监控，在closewait的上升期，查询最新的连接信息<br><code>sudo netstat -anp |grep CL</code></li>
-<li>通过最新的close-wait 端口 查看tcp的信息<br><code>tcpdump -r flightorder.pcap |grep &#39;35493&#39;</code></li>
-</ol>
-<p>通过报文中的http请求，锁定应用级别相关api</p>
-<h4 id="一行代码的低级错误"><a href="#一行代码的低级错误" class="headerlink" title="一行代码的低级错误"></a>一行代码的低级错误</h4><p>定位代码发现，在该处调用中，封装了post相关请求，但是在该方法中，每次调用均重新生成了新的HttpClient，而不是公共静态的httpclient。意味着每一次请求均会生成一个新的连接池进行处理。将实例化代码抽出后发布，发现CLOSE-WAIT量消失，问题解决。</p>
-<h4 id="Http的Keep-alive机制"><a href="#Http的Keep-alive机制" class="headerlink" title="Http的Keep-alive机制"></a>Http的Keep-alive机制</h4><p>定位解决了问题，但是还有一些疑问，<strong>主动方是如何触发的关闭呢？</strong></p>
-<p>这里就需要先普及下Http keepalive机制。Http的Keep alive是一种TCP连接复用机制，在同一个TCP连接上传送多个HTTP，提高Socket的效率。而TCP的keep-alive是TCP的一种检测TCP连接状况的保鲜机制，注意两者区分。</p>
-<p>Http1.1之前（未显示指定Connection:keep-alive）每个http请求都要求打开一个tcp socket连接，并且使用一次之后就断开这个tcp连接。对于如今这种一个页面少则几个多则几十几百个的请求的现状来说这显然不是一种高效的使用方式，http1.1之后默认开启keep-alive，通过使用keep-alive机制，可以减少tcp连接建立次数，以此提高性能和提高http服务器的吞吐率(更少的tcp连接意味着更少的系统内核调用,socket的accept()和close()调用。</p>
-<p>然而keep-alive如果配置不当同样存在风险，长时间的tcp连接容易导致系统资源无效占用。正确地设置keep-alive timeout时间非常重要。那么是否是因为keep-alive超时，发起的主动关闭连接呢？结合tcpdump结果分析</p>
-<p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/closewait%E6%8A%93%E5%8C%85%E7%BB%93%E6%9E%9C.png" alt></p>
-<p>此处我使用wireshark，对上面的抓包结果分析，从图中圈红部分我们可以发现，最后一次ACK和发起主动关闭间隔30s，多个case结果均相同。那么对应的远程主机，也就是ng的keep-alive timeout应该是30，跟运维确认ng配置，得到验证<code>keepalive_timeout  30;  client_body_timeout 30s; client_header_timeout 30s;</code></p>
-<h4 id="TCP连接与Finalize机制"><a href="#TCP连接与Finalize机制" class="headerlink" title="TCP连接与Finalize机制"></a>TCP连接与Finalize机制</h4><p>在观察监控时，还发现一个奇怪的现象，每过5分钟，CLOSE-WAIT的量变断崖式下降。第一反应是否是系统GC掉了？观察GC日志，发现时间点吻合。CLOSE_WAIT变更为LAST_ACK的tcp连接，同时都伴随着gc的发生。</p>
-<p>为什么gc会导致tcp连接的关闭呢？这是就不得不提java的finalize机制。</p>
-<blockquote>
-<p>finalize()方法的工作原理：<br>触发gc时，一旦垃圾回收器准备好释放对象占用的存储空间，如果该对象未重写finalize()方法则可以直接回收，否则会去调用finalize()方法进行一些必要的清理工作。只有到下一次再进行垃圾回收动作的时候，才会真正释放这个对象所占用的内存空间。</p>
-</blockquote>
-<blockquote>
-<p>假定你的对象（并非使用new方法）获得了一块“特殊”的内存区域，由于垃圾回收器只知道那些显示地经由new分配的内存空间，所以它不知道该如何释放这块“特殊”的内存区域，那么这个时候java允许在类中定义一个由finalize()方法，通过这个方法安全的回收“特殊”区域，特殊区域如文件(如java.util.zip.ZipFile)、流(如org.apache.commons.io.input.AutoCloseInputStream)、管道(如java.net.AbstractPlainSocketImpl)等。</p>
-</blockquote>
-<p>apache的httpclient的使用的就是<code>java.net.AbstractPlainSocketImpl</code>(调用的是<code>java.net.SocksSocketImpl，AbstractPlainSocketImpl</code>的子类)中的关闭方法</p>
-<pre><code>protected void finalize() throws IOException {
-    close();
-}
+<p><strong>显然，主键长度越小，普通索引的叶子节点就越小，普通索引占用的空间也就越小。</strong></p>
+<h3 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h3><p>如果执行的语句是 <code>select ID from T where k between 3 and 5</code>，这时只需要查 ID 的值，而 ID 的值已经在 k 索引树上了，因此可以直接提供查询结果，不需要回表。也就是说，在这个查询里面，索引 k 已经“覆盖了”我们的查询需求，我们称为覆盖索引。</p>
+<h3 id="最左前缀原则"><a href="#最左前缀原则" class="headerlink" title="最左前缀原则"></a>最左前缀原则</h3><p><strong>B+ 树这种索引结构，可以利用索引的“最左前缀”，来定位记录。</strong><br>用（name，age）这个联合索引来分析：SQL 语句的条件是<code>where name like ‘张 %’</code>，也能够用上这个索引。<br>只要满足最左前缀，就可以利用索引来加速检索。这个最左前缀可以是联合索引的最左 N 个字段，也可以是字符串索引的最左 M 个字符。</p>
+<h3 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h3><p>以市民表的联合索引（name, age）为例。检索出表中“名字第一个字是张，而且年龄是 10 岁的所有男孩”<br><code>select * from tuser where name like &#39;张 %&#39; and age=10 and ismale=1;</code><br>前缀索引规则，语句在搜索索引树的时候，只能用 “张”，找到第一个满足条件的记录 ID3。之后呢？则比较剩余字段。</p>
+<p>在 MySQL 5.6 之前，只能从 ID3 开始一个个回表。到主键索引上找出数据行，再对比字段值。<br>而 MySQL 5.6 引入的索引下推优化（index condition pushdown)， 可以在索引遍历过程中，对索引中包含的字段先做判断，直接过滤掉不满足条件的记录，减少回表次数。</p>
+<p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/%E6%97%A0%E7%B4%A2%E5%BC%95%E4%B8%8B%E6%8E%A8.png" alt="无索引下推"><br>无索引下推：在 (name,age) 索引里面我特意去掉了 age 的值，这个过程 InnoDB 并不会去看 age 的值，只是按顺序把“name 第一个字是’张’”的记录一条条取出来回表。因此，需要回表 4 次。</p>
+<p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/%E7%B4%A2%E5%BC%95%E4%B8%8B%E6%8E%A8.png" alt="索引下推"><br>索引下推：InnoDB 在 (name,age) 索引内部就判断了 age 是否等于 10，对于不等于 10 的记录，直接判断并跳过。在我们的这个例子中，只需要对 ID4、ID5 这两条记录回表取数据判断，就只需要回表 2 次。</p>
+<hr>
+<p>Q：下列重建索引K与主键索引方式是否正确：</p>
+<pre><code>alter table T drop index k;
+alter table T add index(k);
 
-protected void close() throws IOException {
-    if (cmdsock != null)
-        cmdsock.close();
-    cmdsock = null;
-    super.close();
-}</code></pre>
+alter table T drop primary key;
+alter table T add primary key(id);</code></pre><p>A：重建索引 k 的做法是合理的，可以达到省空间的目的。但是，重建主键的过程不合理。不论是删除主键还是创建主键，都会将整个表重建。所以连着执行这两个语句的话，第一个语句就白做了。这两个语句，你可以用这个语句代替 ： alter table T engine=InnoDB。</p>
+<p>参考：<br>丁奇：Mysql实战45讲<br><a href="https://zhuanlan.zhihu.com/p/78982303" target="_blank" rel="noopener">我以为我对Mysql索引很了解，直到我遇到了阿里的面试官</a></p>
+
             </div>
             <hr/>
 
@@ -670,9 +662,9 @@ protected void close() throws IOException {
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《CLOSE-WAIT的排查之旅》
+                    《Mysql索引》
                 </span> 由
-            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/09/29/close-wait-de-pai-cha-zhi-lu/" property="cc:attributionName"
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/06/mysql-suo-yin/" property="cc:attributionName"
                rel="cc:attributionURL">
                 icecrea
             </a> 采用
@@ -712,45 +704,51 @@ protected void close() throws IOException {
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/">
+                <a href="/2019/10/06/mysql-suo-yin/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-ey61zo.jpg" class="responsive-img" alt="JVM问题排查指令总结">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kw1ky1.jpg" class="responsive-img" alt="Mysql索引">
                         
-                        <span class="card-title">JVM问题排查指令总结</span>
+                        <span class="card-title">Mysql索引</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            总结排查JVM,GC,CPU飙高等相关问题的常用指令
+                            介绍索引模型优缺点、Innodb使用的B+树、索引维护成本、MYSQL5.6新增索引下推、覆盖索引、最左前缀匹配。
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-29
-                        </span>
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-06
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/JVM/" class="post-category" target="_blank">
-                                    JVM
+                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
+                                    MYSQL
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/JVM/" target="_blank">
-                        <span class="chip bg-color">JVM</span>
+                    <a href="/tags/MYSQL/" target="_blank">
+                        <span class="chip bg-color">MYSQL</span>
+                    </a>
+                    
+                    <a href="/tags/索引/" target="_blank">
+                        <span class="chip bg-color">索引</span>
                     </a>
                     
                 </div>
@@ -764,30 +762,30 @@ protected void close() throws IOException {
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/09/27/da-jian-bo-ke/">
+                <a href="/2019/10/03/mysql-suo/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/wallhaven-g8m6d7.png" class="responsive-img" alt="Hexo+Github搭建博客指南">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/ballet" class="responsive-img" alt="Mysql锁">
                         
-                        <span class="card-title">Hexo+Github搭建博客指南</span>
+                        <span class="card-title">Mysql锁</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            五分钟搭建github专属博客
+                            Mysql中三类锁：全局锁、表级锁（表索、MDL锁）、行锁。死锁以及死锁检测。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-27
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-03
                             </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/博客/" class="post-category" target="_blank">
-                                    博客
+                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
+                                    MYSQL
                                 </a>
                             
                             
@@ -797,8 +795,8 @@ protected void close() throws IOException {
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/博客/" target="_blank">
-                        <span class="chip bg-color">博客</span>
+                    <a href="/tags/MYSQL/" target="_blank">
+                        <span class="chip bg-color">MYSQL</span>
                     </a>
                     
                 </div>
