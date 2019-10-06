@@ -132,7 +132,7 @@
         <div class="logo-name">icecrea</div>
         <div class="logo-desc">
             
-            talk is cheap, show me the code
+            每天你都有机会跟很多人擦肩而过，而你对他们一无所知。不过也许有一天，他们会变成你的朋友或知己。
             
         </div>
     </div>
@@ -210,7 +210,7 @@
         
         <li><div class="divider"></div></li>
         <li>
-            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+            <a href="https://github.com/icecrea" class="waves-effect waves-light" target="_blank">
                 <i class="fa fa-github-square fa-fw"></i>Fork Me
             </a>
         </li>
@@ -267,7 +267,7 @@
     }
 </style>
 
-<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+<a href="https://github.com/icecrea" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
    data-tooltip="Fork Me" data-position="left" data-delay="50">
     <svg viewBox="0 0 250 250" aria-hidden="true">
         <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
@@ -286,7 +286,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/%E7%A7%92%E9%80%9F%E4%BA%94%E5%8E%98%E7%B1%B3.png')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-8xzq62.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -500,6 +500,7 @@ insert into t(id, k) values(1,1),(2,2);</code></pre><p><img src="https://icecrea
 <pre><code>mysql&gt; select k from t where id=1 lock in share mode;
 mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可重复读的能力是怎么实现的？<br>可重复读的核心就是一致性读（consistent read）；而事务更新数据的时候，只能用当前读。如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>InnoDB 的行数据有多个版本，每个数据版本有自己的 row trx_id，每个事务或者语句有自己的一致性视图。普通查询语句是一致性读，一致性读会根据 row trx_id 和一致性视图确定数据版本的可见性。<br>对于可重复读，查询只承认在事务启动前就已经提交完成的数据；<br>对于读提交，查询只承认在语句启动前就已经提交完成的数据；</p>
+<p>参考：<br>丁奇：Mysql实战45讲</p>
 
             </div>
             <hr/>
@@ -708,7 +709,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
                 <a href="/2019/10/06/mysql-ke-chong-fu-du-ge-chi-ji-bie/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/%E7%A7%92%E9%80%9F%E4%BA%94%E5%8E%98%E7%B1%B3.png" class="responsive-img" alt="Mysql一致性视图">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-8xzq62.jpg" class="responsive-img" alt="Mysql一致性视图">
                         
                         <span class="card-title">Mysql一致性视图</span>
                     </div>
@@ -911,7 +912,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
 <footer class="page-footer bg-color">
     <div class="container row center-align">
         <div class="col s12 m8 l8 copy-right">
-            &copy; 2019 icecrea. All Rights Reserved.
+            &copy; 2019 Icecrea. All Rights Reserved.
 
             
             &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
@@ -962,8 +963,8 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
 <script>
     $(document).ready(function () {
         var int = setInterval(fixCount, 50);
-        var pvcountOffset = 80000;
-        var uvcountOffset = 20000;
+        var pvcountOffset = 0;
+        var uvcountOffset = 0;
         function fixCount() {
             if (document.getElementById("busuanzi_container_site_pv").style.display != "none") {
                 $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + pvcountOffset);
@@ -977,6 +978,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
     });
 </script>
 
+<!--
 <script language=javascript>
     function siteTime() {
         window.setTimeout("siteTime()", 1000);
@@ -1000,7 +1002,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
         minutes - 0-59之间的整数，做为date对象的分钟数
         seconds - 0-59之间的整数，做为date对象的秒数
         microseconds - 0-999之间的整数，做为date对象的毫秒数 */
-        var t1 = Date.UTC(2017, 09, 11, 00, 00, 00); //北京时间2018-2-13 00:00:00
+        var t1 = Date.UTC(2019, 10, 01, 00, 00, 00); //北京时间2018-2-13 00:00:00
         var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
         var diff = t2 - t1;
         var diffYears = Math.floor(diff / years);
@@ -1012,6 +1014,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
     }/*因为建站时间还没有一年，就将之注释掉了。需要的可以取消*/
     siteTime();
 </script>
+-->
 
 <!-- 搜索遮罩框 -->
 <div id="searchModal" class="modal">
