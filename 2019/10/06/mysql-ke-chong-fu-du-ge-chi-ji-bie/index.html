@@ -4,9 +4,8 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="Mysql锁, icecrea">
-    <meta name="description" content="Mysql锁MySQL 里面的锁大致可以分成全局锁、表级锁和行锁三类
-全局锁顾名思义，全局锁就是对整个数据库实例加锁。MySQL 提供了一个加全局读锁的方法，命令是 Flush tables with read lock (FTWRL)。当">
+    <meta name="keywords" content="Mysql一致性视图, icecrea">
+    <meta name="description" content="Mysql一致性视图RC与RR的实现方式：一致性读视图InnoDB在实现MVCC时用到一致性读视图，consistent read view，用于支持 RC（Read Committed，读提交）和 RR（Repeatable Read，可">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -14,7 +13,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Mysql锁 | icecrea</title>
+    <title>Mysql一致性视图 | icecrea</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -287,13 +286,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/ballet')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/%E7%A7%92%E9%80%9F%E4%BA%94%E5%8E%98%E7%B1%B3.png')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        Mysql锁
+                        Mysql一致性视图
                     </div>
                 </div>
             </div>
@@ -408,6 +407,10 @@
                                 <span class="chip bg-color">MYSQL</span>
                             </a>
                         
+                            <a href="/tags/MYSQL事务/" target="_blank">
+                                <span class="chip bg-color">MYSQL事务</span>
+                            </a>
+                        
                     </div>
                     
                 </div>
@@ -428,21 +431,21 @@
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-10-03
+                    2019-10-06
                 </div>
 
                 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        2.2k
+                        1.6k
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        7 分
+                        6 分
                     </div>
                     
                 
@@ -458,37 +461,45 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Mysql锁"><a href="#Mysql锁" class="headerlink" title="Mysql锁"></a>Mysql锁</h2><p>MySQL 里面的锁大致可以分成全局锁、表级锁和行锁三类</p>
-<h3 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h3><p>顾名思义，全局锁就是对整个数据库实例加锁。MySQL 提供了一个加全局读锁的方法，命令是 <code>Flush tables with read lock (FTWRL)</code>。当你需要让整个库处于只读状态的时候，可以使用这个命令，之后其他线程的以下语句会被阻塞：数据更新语句（数据的增删改）、数据定义语句（包括建表、修改表结构等）和更新类事务的提交语句。</p>
-<p><strong>全局锁的典型使用场景是，做全库逻辑备份。</strong>也就是把整库每个表都 select 出来存成文本。<br>主库上备份，那么在备份期间都不能执行更新。从库上备份，那么备份期间从库不能执行主库同步过来的 binlog，会导致主从延迟。</p>
-<p>备份是否可以不加锁？<br>假设备份期间，有一个用户，他购买了一门课程，业务逻辑里就要扣掉他的余额，然后往已购课程里面加上一门课。<br>假设不加锁。如果时间顺序上是先备份账户余额表，然后用户购买，然后备份用户课程表。在备份结果里用户状态为余额没扣，多了一门课程。后续用该备份恢复数据会有问题。<br><strong>不加锁的话，备份系统备份的得到的库不是一个逻辑时间点，这个视图是逻辑不一致的。</strong></p>
-<p>可重复读隔离级别下可以拿到一致性视图。<br>官方自带的逻辑备份工具是 mysqldump。当 mysqldump 使用参数<code>–single-transaction</code>的时候，导数据之前就会启动一个事务，来确保拿到一致性视图。而由于 MVCC 的支持，这个过程中数据是可以正常更新的。<strong>single-transaction 方法只适用于所有的表使用事务引擎的库。</strong></p>
-<h3 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h3><p>MySQL 里面表级别的锁有两种：一种是表锁，一种是元数据锁（meta data lock，MDL)。</p>
-<h4 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h4><p>表锁的语法是 <code>lock tables … read/write</code>。与 FTWRL 类似，可以用 <code>unlock tables</code> 主动释放锁，也可以在客户端断开的时候自动释放。需要注意，<code>lock tables</code> 语法除了会限制别的线程的读写外，也限定了本线程接下来的操作对象。 </p>
-<p><strong>如果在某个线程 A 中执行 lock tables t1 read, t2 write; 这个语句，则其他线程写 t1、读写 t2 的语句都会被阻塞。同时，线程 A 在执行 unlock tables 之前，也只能执行读 t1、读写 t2 的操作。连写 t1 都不允许，自然也不能访问其他表</strong></p>
-<p>线程A对T加读锁，限制其它线程写T，限制本线程写T，线程A不能访问其它表。<br>线程A对T加写锁，限制其它线程读写T，线程A不能访问其它表。</p>
-<h4 id="MDL锁"><a href="#MDL锁" class="headerlink" title="MDL锁"></a>MDL锁</h4><p>另一类表级的锁是 MDL（metadata lock)。<br>MDL 不需要显式使用，在访问一个表的时候会被自动加上。<br>在 MySQL 5.5 版本中引入了 MDL，<strong>当对一个表做增删改查操作的时候，加 MDL 读锁；当要对表做结构变更操作的时候，加 MDL 写锁。</strong></p>
-<ul>
-<li>读锁之间不互斥，因此你可以有多个线程同时对一张表增删改查。</li>
-<li>读写锁之间、写锁之间是互斥的，用来保证变更表结构操作的安全性。</li>
-</ul>
-<p><strong>踩坑：给一个小表加个字段，导致整个库挂了。</strong><br><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/MDL.jpg" alt></p>
-<p>如图：sessionA先启动，加MDL读锁，B也是加MDL读锁，不影响B查询。C需要MDL写锁，因为A的MDL读锁还没有释放，所以C会被阻塞。但是之后在表t上申请MDL读锁的请求也会被C阻塞（增删改查）。等于表现在不可读写了。(问题：C没有加锁成功为什么会阻塞D？应该是因为CD均在同一个锁队列中，决定谁先执行，sessionC在等待的时候就开始阻塞后来的请求了)</p>
-<p>如果表查询语句频繁且客户端有重试，即超时起一个新session请求，库的线程很快会饱满。<br><strong>事务中的MDL锁，在语句执行开始时申请，事务提交后再释放。</strong></p>
-<p><strong>Q：如何安全地给小表加字段？</strong><br>1.首先我们要解决长事务，事务不提交，就会一直占着 MDL 锁。在 MySQL 的 information_schema 库的 innodb_trx 表中，你可以查到当前执行中的事务。如果你要做 DDL 变更的表刚好有长事务在执行，要考虑先暂停 DDL，或者 kill 掉这个长事务。<br>2.如果是一个热点表，请求频繁kill不过来。理想的机制是，在 alter table 语句里面设定等待时间，如果在这个指定的等待时间里面能够拿到 MDL 写锁最好，拿不到也不要阻塞后面的业务语句，先放弃。MariaDB 已经合并了 AliSQL 的这个功能，所以这两个开源分支目前都支持 DDL NOWAIT/WAIT n 这个语法。<br><code>ALTER TABLE tbl_name NOWAIT add column ...</code>  <code>ALTER TABLE tbl_name WAIT N add column ...</code></p>
-<h3 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h3><p>MySQL 的行锁是在引擎层由各个引擎自己实现的。MyISAM 引擎不支持行锁。</p>
-<p><strong>在 InnoDB 事务中，行锁是在需要的时候才加上的，但并不是不需要了就立刻释放，而是要等到事务结束时才释放。这个就是两阶段锁协议。</strong></p>
-<p><strong>如果你的事务中需要锁多个行，要把最可能造成锁冲突、最可能影响并发度的锁尽量往后放。</strong><br>如影院购票，假设有用户余额扣除票价，影院账户余额增加票价，记录日志操作。在事务中，我们就可以把容易冲突的影院账户余额增加票价安排到最后，这样影院账户余额这一行锁时间就最小，最大程度减少了事务的锁等待，提升并发度。</p>
-<h4 id="死锁和死锁检测"><a href="#死锁和死锁检测" class="headerlink" title="死锁和死锁检测"></a>死锁和死锁检测</h4><p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/sisuo.jpg" alt><br>如图，事务 A 和事务 B 在互相等待对方的资源释放，就是进入了死锁状态。出现死锁后有两种策略：</p>
-<ol>
-<li>直接进入等待，直到超时。这个超时时间可以通过参数 innodb_lock_wait_timeout 来设置。<br>在 InnoDB 中，innodb_lock_wait_timeout 的默认值是 50s。当出现死锁以后，第一个被锁住的线程要过 50s 才会超时退出。设置太小又可能导致误判，简单的锁等待。</li>
-<li>发起死锁检测，发现死锁后，主动回滚死锁链条中的某一个事务，让其他事务得以继续执行。将参数 innodb_deadlock_detect 设置为 on，表示开启这个逻辑。默认开启。<br>每当一个事务被锁的时候，就要看看它所依赖的线程有没有被别人锁住，如此循环，最后判断是否出现了循环等待，也就是死锁。</li>
-</ol>
-<p>每个新来的被堵住的线程，都要判断会不会由于自己的加入导致了死锁，这是一个时间复杂度是 O(n) 的操作。假设有 1000 个并发线程要同时更新同一行，那么死锁检测操作就是 100 万这个量级的。虽然最终检测的结果是没有死锁，但是这期间要消耗大量的 CPU 资源。因此，你就会看到 CPU 利用率很高，但是每秒却执行不了几个事务。</p>
-<p>怎么解决由这种热点行更新导致的性能问题呢？<br>1.控制并发度。如同一行同时最多只有 10 个线程在更新，那么死锁检测的成本很低。并发控制要放在服务端。<br>2.通过将一行改成逻辑上的多行来减少锁冲突。还是以影院账户为例，可以考虑放在多条记录上，比如 10 个记录，影院的账户总额等于这 10 个记录的值的总和。这样每次要给影院账户加金额的时候，随机选其中一条记录来加。这样每次冲突概率变成原来的 1/10，可以减少锁等待个数，也就减少了死锁检测的 CPU 消耗。</p>
-<p><strong>Q：如果你要删除一个表里面的前 10000 行数据，有以下三种方法可以做到，选择哪一种？</strong><br>第一种，直接执行 delete from T limit 10000;<br>第二种，在一个连接中循环执行 20 次 delete from T limit 500;<br>第三种，在 20 个连接中同时执行 delete from T limit 500。</p>
-<p>A：第二种比较合适。第一种方式单个语句占用时间长，锁时间长，且大事务会导致主从延迟。第三种会人为造成锁冲突。</p>
-<p>参考：<br>丁奇：Mysql实战45讲</p>
+                <h2 id="Mysql一致性视图"><a href="#Mysql一致性视图" class="headerlink" title="Mysql一致性视图"></a>Mysql一致性视图</h2><h3 id="RC与RR的实现方式：一致性读视图"><a href="#RC与RR的实现方式：一致性读视图" class="headerlink" title="RC与RR的实现方式：一致性读视图"></a>RC与RR的实现方式：一致性读视图</h3><p>InnoDB在实现MVCC时用到<strong>一致性读视图</strong>，<code>consistent read view</code>，用于支持 RC（Read Committed，读提交）和 RR（Repeatable Read，可重复读）隔离级别的实现。它没有物理结构，作用是事务执行期间用来定义“我能看到什么数据”。</p>
+<h3 id="快照在MVCC里是如何工作的？"><a href="#快照在MVCC里是如何工作的？" class="headerlink" title="快照在MVCC里是如何工作的？"></a>快照在MVCC里是如何工作的？</h3><p><strong>可重复读隔离级别下，事务在启动时拍了基于整库的快照。</strong><br>InnoDB 里面每个事务有一个唯一的事务 ID，叫作 transaction id。它是在事务开始的时候向 InnoDB 的事务系统申请的，是按申请顺序严格递增的。每行数据也都是有多个版本的。每次事务更新数据的时候，都会生成一个新的数据版本，并且把 transaction id 赋值给这个数据版本的事务 ID，记为 row trx_id。同时，旧的数据版本要保留，并且在新的数据版本中，能够有信息可以直接拿到它。（通过执行更新操作时生成的undo log回滚日志）</p>
+<p>InnoDB 利用了“所有数据都有多个版本”的这个特性，实现了“秒级创建快照”的能力。</p>
+<blockquote>
+<p>可重复读的定义，一个事务启动的时候，能够看到所有已经提交的事务结果。但是之后，这个事务执行期间，其他事务的更新对它不可见。</p>
+</blockquote>
+<h3 id="事务的视图数组与数据版本row-trx-id"><a href="#事务的视图数组与数据版本row-trx-id" class="headerlink" title="事务的视图数组与数据版本row trx_id"></a>事务的视图数组与数据版本row trx_id</h3><p>在实现上， <strong>InnoDB 为每个事务构造了一个数组</strong>，用来保存这个<strong>事务启动瞬间</strong>，当前正在“活跃”的所有事务 ID。<br><strong>“活跃”指的就是，启动了但还没提交。</strong></p>
+<blockquote>
+<p>低水位：数组里面事务 ID 的最小值记。<br>高水位：当前系统里面已经创建过的事务 ID 的最大值加 1 。<br>视图数组和高水位，就组成了当前事务的一致性视图（read-view）。</p>
+</blockquote>
+<p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/%E4%BA%8B%E5%8A%A1%E6%95%B0%E7%BB%84.png" alt><br>一个数据版本的 row trx_id，有以下可能：</p>
+<pre><code>1. 在绿色部分，表示这个版本是已提交的事务或者是当前事务自己生成的，这个数据是可见的；
+2. 如果落在红色部分，表示这个版本是由将来启动的事务生成的，是肯定不可见的；
+3. 如果落在黄色部分，那就包括两种情况
+    a. 若 row trx_id 在数组中，表示这个版本是由还没提交的事务生成的，不可见；
+    b. 若 row trx_id 不在数组中，表示这个版本是已经提交了的事务生成的，可见。</code></pre><h3 id="实战分析"><a href="#实战分析" class="headerlink" title="实战分析"></a>实战分析</h3><pre><code>mysql&gt; CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `k` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+insert into t(id, k) values(1,1),(2,2);</code></pre><p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/MVCC.png" alt><br>图中事务B查询结果为3，事务A查询结果为1。下面解释原因：</p>
+<p>可以先做如下假设</p>
+<pre><code>1. 事务 A 开始前，系统里面只有一个活跃事务 ID 是 99；
+2. 事务 A、B、C 的版本号分别是 100、101、102，且当前系统里只有这四个事务；
+3. 三个事务开始前，(1,1）这一行数据的 row trx_id 是 90。</code></pre><p>事务A的数组为[99,100]，事务B数组为[99,100,101]，事务C数组为[99,100,101,102]</p>
+<p>事务 C先把数据从 (1,1) 改成了 (1,2)。这时候，这个数据的最新版本的 row trx_id 是 102，而 90 这个版本已经成为了历史版本。第二个有效更新是事务 B，把数据从 (1,2) 改成了 (1,3)。这时候，这个数据的最新版本（即 row trx_id）是 101，而 102 又成为了历史版本。row trx_id更新过程即为90-》102-》101。</p>
+<pre><code>事务A读数据，A的视图数组是 [99,100]，
+1. 找到当前数据（1，3），row trx_id=101，比高水位大，处于红色区域，不可见；（版本未提交）
+2. 找到上一个历史版本，一看 row trx_id=102，比高水位大，处于红色区域，不可见；（版本视图创建后提交）
+3. 找到上一个历史版本（1,1)，它的 row trx_id=90，比低水位小，处于绿色区域，可见。</code></pre><p>更容易理解的分析方法：</p>
+<pre><code>一个数据版本，对于一个事务视图来说，除了自己的更新总是可见以外，有三种情况：
+1. 版本未提交，不可见；
+2. 版本已提交，但是是在视图创建后提交的，不可见；
+3. 版本已提交，而且是在视图创建前提交的，可见。</code></pre><h3 id="更新逻辑：当前读"><a href="#更新逻辑：当前读" class="headerlink" title="更新逻辑：当前读"></a>更新逻辑：当前读</h3><p>结论：<strong>更新数据都是先读后写的，而这个读，只能读当前的值，称为“当前读”（current read）。</strong></p>
+<p>对事务B来说，更新的时候，当前读拿到的数据是 (1,2)，更新后生成了新版本的数据 (1,3)，这个新版本的 row trx_id 是 101。在执行事务 B 查询语句的时候，一看自己的版本号是 101，最新数据的版本号也是 101，是自己的更新，可以直接使用，所以查询得到的 k 的值是 3。</p>
+<p>除了 update 语句外，select 语句如果加锁，也是当前读。<br>所以如果把事务 A 的查询语句 <code>select * from t where id=1</code>修改一下，加上 <code>lock in share mode</code> 或 <code>for update</code>，也都可以读到版本号是 101 的数据，返回的 k 的值是 3。下面这两个 select 语句，就是分别加了读锁（S 锁，共享锁）和写锁（X 锁，排他锁）。</p>
+<pre><code>mysql&gt; select k from t where id=1 lock in share mode;
+mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可重复读的能力是怎么实现的？<br>可重复读的核心就是一致性读（consistent read）；而事务更新数据的时候，只能用当前读。如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>InnoDB 的行数据有多个版本，每个数据版本有自己的 row trx_id，每个事务或者语句有自己的一致性视图。普通查询语句是一致性读，一致性读会根据 row trx_id 和一致性视图确定数据版本的可见性。<br>对于可重复读，查询只承认在事务启动前就已经提交完成的数据；<br>对于读提交，查询只承认在语句启动前就已经提交完成的数据；</p>
 
             </div>
             <hr/>
@@ -647,9 +658,9 @@
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《Mysql锁》
+                    《Mysql一致性视图》
                 </span> 由
-            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/03/mysql-suo/" property="cc:attributionName"
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/06/mysql-ke-chong-fu-du-ge-chi-ji-bie/" property="cc:attributionName"
                rel="cc:attributionURL">
                 icecrea
             </a> 采用
@@ -689,9 +700,63 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2019/10/06/mysql-ke-chong-fu-du-ge-chi-ji-bie/">
+                    <div class="card-image">
+                        
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/%E7%A7%92%E9%80%9F%E4%BA%94%E5%8E%98%E7%B1%B3.png" class="responsive-img" alt="Mysql一致性视图">
+                        
+                        <span class="card-title">Mysql一致性视图</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            MYSQL可重复读和读提交的实现方式：一致性视图。行数据的数据版本。事务的更新逻辑：当前读
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-06
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
+                                    MYSQL
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/MYSQL/" target="_blank">
+                        <span class="chip bg-color">MYSQL</span>
+                    </a>
+                    
+                    <a href="/tags/MYSQL事务/" target="_blank">
+                        <span class="chip bg-color">MYSQL事务</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/2019/10/06/mysql-suo-yin/">
                     <div class="card-image">
@@ -708,60 +773,8 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-06
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fa fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
-                                    MYSQL
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/MYSQL/" target="_blank">
-                        <span class="chip bg-color">MYSQL</span>
-                    </a>
-                    
-                    <a href="/tags/索引/" target="_blank">
-                        <span class="chip bg-color">索引</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2019/10/03/suo-yin-shi-xiao-shi-zhan-pian-han-shu-cao-zuo/">
-                    <div class="card-image">
-                        
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/文章封面/wallhaven-j5yj5p.jpg" class="responsive-img" alt="索引失效实战篇 - 函数操作">
-                        
-                        <span class="card-title">索引失效实战篇 - 函数操作</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            涉及三个案例，条件字段函数操作，隐式类型转换，隐式字符编码转换。对索引字段做函数操作，可能会破坏索引值的有序性，优化器就决定放弃走树搜索功能。
-                        
-                    </div>
-                    <div class="publish-info">
                             <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-03
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-06
                             </span>
                         <span class="publish-author">
                             
