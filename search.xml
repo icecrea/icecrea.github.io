@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>Mysql唯一索引性能问题 - change buffer</title>
+      <link href="/2019/10/08/mysql-wei-yi-suo-yin-xing-neng-wen-ti-change-buffer/"/>
+      <url>/2019/10/08/mysql-wei-yi-suo-yin-xing-neng-wen-ti-change-buffer/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Mysql唯一索引性能问题-change-buffer"><a href="#Mysql唯一索引性能问题-change-buffer" class="headerlink" title="Mysql唯一索引性能问题 - change buffer"></a>Mysql唯一索引性能问题 - change buffer</h2><p>Q：如果业务保证了唯一。从性能的角度考虑，选择唯一索引还是普通索引呢？</p><h3 id="查询过程："><a href="#查询过程：" class="headerlink" title="查询过程："></a>查询过程：</h3><blockquote><p>唯一索引：查找到第一个满足的条件就停止检索<br>普通索引：直到不满足条件时停止检索<br>性能差异：极低可忽略</p></blockquote><p>InnoDB 的数据是按<strong>数据页</strong>为单位来读写的。也就是说，当需要读一条记录的时候，并不是将这个记录本身从磁盘读出来，而是以页为单位，将其整体读入内存。<br>在 InnoDB 中，每个数据页的大小默认是 16KB。<br>因为引擎是按页读写的，所以说，当找到一条记录的时候，它所在的数据页就都在内存里了。那么，对于普通索引来说，要多做的那一次“查找和判断下一条记录”的操作，就只需要一次指针寻找和一次计算。如果刚好是该数据页最后一条记录，必须读下一数据页会稍微复杂。但其概率很小，如对于整型字段，一个数据页可以放仅千个key。</p><h3 id="更新过程："><a href="#更新过程：" class="headerlink" title="更新过程："></a>更新过程：</h3><p>change buffer介绍：</p><blockquote><p>当需要<strong>更新一个数据页</strong>时，如果数据页在内存中就直接更新，而<strong>如果这个数据页还没有在内存中的话，在不影响数据一致性的前提下，InooDB 会将这些更新操作缓存在 change buffer 中，这样就不需要从磁盘中读入这个数据页了。</strong>在下次查询需要访问这个数据页的时候，将数据页读入内存，然后执行 change buffer 中与这个页有关的操作。通过这种方式就能保证这个数据逻辑的正确性。</p><p>将 change buffer 中的操作应用到原数据页，得到最新结果的过程称为 merge。除了<strong>访问这个数据页</strong>会触发 merge 外，系统有后台线程会定期 merge。在数据库正常关闭（shutdown）的过程中，也会执行 merge 操作。</p></blockquote><p>可以推出：如果能够将更新操作先记录在 change buffer，减少读磁盘，语句的执行速度会得到明显的提升。而且，数据读入内存是需要占用 buffer pool 的，所以这种方式还能够避免占用内存，提高内存利用率。</p><p>唯一索引更新会先判断唯一性约束，必须要将数据页读入内存才能判断。因此不会使用change buffer。</p><p>change buffer 用的是 buffer pool 里的内存，因此不能无限增大。change buffer 的大小，可以通过参数 <code>innodb_change_buffer_max_size</code> 来动态设置。这个参数设置为 50 的时候，表示 change buffer 的大小最多只能占用 buffer pool 的 50%。</p><p>执行更新插入操作时，普通索引和唯一索引区别</p><ul><li>如果记录要更新的目标页在内存中，影响不大</li><li>如果记录要更新的目标页不在内存中<ul><li>唯一索引：需要<strong>将数据页读入内存</strong>。判断到没有冲突，插入这个值。</li><li>普通索引：将更新记录在 change buffer，语句执行就结束了。</li></ul></li></ul><p>将数据从磁盘读入内存涉及随机 IO 的访问，是数据库里面成本最高的操作之一。change buffer 因为减少了随机磁盘访问，所以对更新性能的提升是会很明显的。</p><h3 id="change-buffer-的使用场景"><a href="#change-buffer-的使用场景" class="headerlink" title="change buffer 的使用场景"></a>change buffer 的使用场景</h3><p>Q：普通索引的所有场景，使用 change buffer 都可以起到加速作用吗？</p><p>merge 的时候是真正进行数据更新的时刻，而 change buffer 的主要目的就是将记录的变更动作缓存下来，所以在一个数据页做 merge 之前，change buffer 记录的变更越多（也就是这个页面上要更新的次数越多），收益就越大。</p><ul><li>对于<strong>写多读少</strong>的业务来说，页面在写完以后马上被访问到的概率比较小，此时 change buffer 的使用效果最好。这种业务模型常见的就是<strong>账单类、日志类</strong>的系统。</li><li>对于<strong>更新后马上会查询</strong>的业务来说，随机访问 IO 的次数不会减少，反而增加了 change buffer 的维护代价。</li></ul><h3 id="change-buffer-与redo-log"><a href="#change-buffer-与redo-log" class="headerlink" title="change buffer 与redo log"></a>change buffer 与redo log</h3><p>Mysql中WAL技术，即<code>Write-aheading Logging</code>，关键点就是先写日志再写磁盘。如果每条更新都要写磁盘，磁盘找到记录再更新整个IO、查找成本都很高。所以更新操作时，先把记录写到redo log，并更新内存就算更新完成。在适当的时候将记录更新到磁盘。</p><p>如何理解change buffer 和 redo log的顺序？<br>假设语句<code>insert into t(id,k) values(id1,k1),(id2,k2);</code> 其中k1所在数据页在内存中，k2数据页不在<br>更新操作：</p><ol><li>k1对应Page 1在内存中直接更新内存</li><li>k2对应Page 2 没有在内存中，就在内存的 change buffer 区域，记录下“我要往 Page 2 插入一行”这个信息</li><li>将上述两个动作记入 redo log 中</li></ol><p>上述做完事务完成，更新的成本很低，写了两处内存，一处磁盘（两次操作合在一起写，还是顺序写）</p><p>如果后续读操作，假设此时内存中数据页还在：</p><ol><li>读page1直接从内存中返回。此处可能会疑惑，wal后是否一定要读盘，是否一定要从redo log里将数据更新后才返回。其实不需要，直接从内存返回结果</li><li>读 Page 2 的时候，需要把 Page 2 从磁盘读入内存中，然后应用 change buffer 里面的操作日志，生成一个正确的版本并返回结果。</li></ol><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>普通索引和唯一索引查询能力没差别，主要在更新性能影响。如果所有的更新后面马上伴随了查询，应该关闭change buffer。其它情况下change buffer会提高性能。如果碰上了大量插入数据慢、内存命中率低的时候，可以考虑唯一索引方向的排查思路。历史数据的归档库，可以考虑唯一索引改成普通索引。</p><p>参考：<br>丁奇Mysql45讲</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> MYSQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> MYSQL </tag>
+            
+            <tag> 索引 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Mysql一致性视图</title>
       <link href="/2019/10/06/mysql-ke-chong-fu-du-ge-chi-ji-bie/"/>
       <url>/2019/10/06/mysql-ke-chong-fu-du-ge-chi-ji-bie/</url>
