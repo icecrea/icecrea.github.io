@@ -4,9 +4,8 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="索引失效实战篇 - 函数操作, icecrea">
-    <meta name="description" content="索引失效实战篇 - 函数操作1、 条件字段函数操作mysql&amp;gt; select count(*) from tradelog where month(t_modified)=7;
-B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
+    <meta name="keywords" content="InnoDB刷脏页策略 - 为什么我的Mysql会抖一下, icecrea">
+    <meta name="description" content="InnoDB刷脏页策略 - 为什么我的Mysql会抖一下什么是脏页？为什么会有脏页？前文已介绍过，Mysql有Write Ahead Logging 机制，InnoDB 在处理更新语句的时候，只做了写日志redo log这一个磁盘操作。而将">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -14,7 +13,7 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>索引失效实战篇 - 函数操作 | icecrea</title>
+    <title>InnoDB刷脏页策略 - 为什么我的Mysql会抖一下 | icecrea</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -287,13 +286,13 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/文章封面/wallhaven-j5yj5p.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kwj3z7.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        索引失效实战篇 - 函数操作
+                        InnoDB刷脏页策略 - 为什么我的Mysql会抖一下
                     </div>
                 </div>
             </div>
@@ -408,10 +407,6 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
                                 <span class="chip bg-color">MYSQL</span>
                             </a>
                         
-                            <a href="/tags/索引/" target="_blank">
-                                <span class="chip bg-color">索引</span>
-                            </a>
-                        
                     </div>
                     
                 </div>
@@ -432,21 +427,21 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-10-03
+                    2019-10-06
                 </div>
 
                 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        948
+                        1.2k
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        3 分
+                        4 分
                     </div>
                     
                 
@@ -462,30 +457,33 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="索引失效实战篇-函数操作"><a href="#索引失效实战篇-函数操作" class="headerlink" title="索引失效实战篇 - 函数操作"></a>索引失效实战篇 - 函数操作</h2><h3 id="1、-条件字段函数操作"><a href="#1、-条件字段函数操作" class="headerlink" title="1、 条件字段函数操作"></a>1、 条件字段函数操作</h3><p><code>mysql&gt; select count(*) from tradelog where month(t_modified)=7;</code></p>
-<p>B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有序性。<strong>对索引字段做函数操作，可能会破坏索引值的有序性，因此优化器就决定放弃走树搜索功能</strong>。注意：优化器并不是要放弃使用这个索引。对比索引大小选择更小的索引。加了 month() 函数操作，MySQL 无法再使用索引快速定位功能，而只能使用全索引扫描。</p>
-<p>优化器在个问题上确实有“偷懒”行为，即使是对于不改变有序性的函数，也不会考虑使用索引。比如，对于 <code>select * from tradelog where id + 1 = 10000</code></p>
-<h3 id="2、-隐式类型转换"><a href="#2、-隐式类型转换" class="headerlink" title="2、 隐式类型转换"></a>2、 隐式类型转换</h3><p><code>select * from tradelog where tradeid=110717;</code><br>tradeid 的字段类型是 varchar(32)，而输入的参数却是整型，所以需要做类型转换。</p>
-<p>数据类型转换的规则是什么？有一个简单的方法，看 select “10” &gt; 9 的结果</p>
-<pre><code>1. 如果规则是“将字符串转成数字”，那么就是做数字比较，结果应该是 1
-2. 如果规则是“将数字转成字符串”，那么就是做字符串比较，结果应该是 </code></pre><p>验证结果为1，所以在MYSQL中是将<strong>字符串转换成数字</strong><br>对于优化器来说，上面操作等于<code>select * from tradelog where CAST(tradid AS signed int) = 110717;</code>符合上面规则，<strong>对索引字段做函数操作，优化器会放弃走树搜索功能</strong></p>
-<p>注意：<code>select * from tradelog where id=&quot;83126&quot;;</code>该case中，id是int类型，不会导致全表扫描。因为是字符串转整数，所以会先将入参83126转化成数字，在进入索引搜索。</p>
-<h3 id="3、隐式字符编码转换"><a href="#3、隐式字符编码转换" class="headerlink" title="3、隐式字符编码转换"></a>3、隐式字符编码转换</h3><p><code>select d.* from tradelog l, trade_detail d where d.tradeid=l.tradeid and l.id=2;</code><br>链表查询交易记录标和详情表，通过tradeid关联，tradedetail是utf8编码，tradelog是utf8mb4。<br>查询分析结果如下：<br><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/lianbiaochaxun.png" alt></p>
-<pre><code>1. 第一行显示优化器会先在交易记录表 tradelog 上查到 id=2 的行，这个步骤用上了主键索引，rows=1 表示只扫描一行
-2. 第二行 key=NULL，表示没有用上交易详情表 trade_detail 上的 tradeid 索引，进行了全表扫描</code></pre><p>表 trade_detail 里 tradeid 字段上是有索引的，为什么没有使用？因为这两个表的字符集不同，一个是 utf8，一个是 utf8mb4，所以做表连接查询的时候用不上关联字段的索引。那为什么字符集不同就用不上索引呢？</p>
+                <h2 id="InnoDB刷脏页策略-为什么我的Mysql会抖一下"><a href="#InnoDB刷脏页策略-为什么我的Mysql会抖一下" class="headerlink" title="InnoDB刷脏页策略 - 为什么我的Mysql会抖一下"></a>InnoDB刷脏页策略 - 为什么我的Mysql会抖一下</h2><h3 id="什么是脏页？为什么会有脏页？"><a href="#什么是脏页？为什么会有脏页？" class="headerlink" title="什么是脏页？为什么会有脏页？"></a>什么是脏页？为什么会有脏页？</h3><p>前文已介绍过，Mysql有Write Ahead Logging 机制，InnoDB 在处理更新语句的时候，只做了写日志redo log这一个磁盘操作。而将内存里的数据写入磁盘的过程，术语就是 <code>flush</code>。在flush 操作执行之前，内存与磁盘数据是不一致的。</p>
 <blockquote>
-<p>字符集 utf8mb4 是 utf8 的超集，所以当这两个类型的字符串在做比较的时候，MySQL 内部的操作是，先把 utf8 字符串转成 utf8mb4 字符集，再做比较。可以理解为=“按数据长度增加的方向”进行转换。</p>
+<p>当内存数据页跟磁盘数据页内容不一致的时候，我们称这个内存页为“脏页”。<br>内存数据写入到磁盘后，内存和磁盘上的数据页的内容就一致了，称为“干净页”。</p>
 </blockquote>
-<p>实际上等同如下写法：<br><code>select * from trade_detail where CONVERT(traideid USING utf8mb4)=$L2.tradeid.value</code></p>
-<p><strong>连接过程中要求在被驱动表的索引字段上加函数操作</strong>，是直接导致对被驱动表做全表扫描的原因。</p>
-<p>对比验证<code>select l.operator from tradelog l , trade_detail d where d.tradeid=l.tradeid and d.id=4;</code><br>此时转换成<code>select operator from tradelog where traideid =CONVERT($R4.tradeid.value USING utf8mb4);</code>CONVERT 函数是加在输入参数上的，这样就可以用上被驱动表的 traideid 索引。</p>
-<p>第一种查询的解决方案：</p>
+<h3 id="什么情况下会刷脏页？"><a href="#什么情况下会刷脏页？" class="headerlink" title="什么情况下会刷脏页？"></a>什么情况下会刷脏页？</h3><p>刷脏页有下列四种场景：<br><strong>一、 redo log 写满了，要 flush 脏页</strong><br><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/redolog%E5%86%99%E6%BB%A1.jpg" alt><br>redo log 写满了，系统会停止所有更新操作，把 checkpoint 往前推进，redo log 留出空间可以继续写。<br>checkpoint 位置从 CP 推进到 CP’，就需要将两个点之间的日志（浅绿色部分），对应的所有脏页都 flush 到磁盘上。之后，图中从 write pos 到 CP’之间就是可以再写入的 redo log 的区域。<br>innodb要尽量避免，会堵住所有更新。</p>
+<p><strong>二、内存不够用了，要先将脏页写到磁盘 **<br>这种情况是常态。</strong>InnoDB 用缓冲池（buffer pool）管理内存**，缓冲池中的内存页有三种状态：</p>
 <ol>
-<li>转换成utf8mb4</li>
-<li>修改SQL语句 <code>select d.* from tradelog l , trade_detail d where d.tradeid=CONVERT(l.tradeid USING utf8) and l.id=2;</code></li>
+<li>还没有使用的；</li>
+<li>使用了并且是干净页；</li>
+<li>使用了并且是脏页。</li>
 </ol>
-<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p><strong>对索引字段做函数操作，可能会破坏索引值的有序性，因此优化器就决定放弃走树搜索功能。</strong></p>
-<p>参考：<br>丁奇：MYSQL实战45讲</p>
+<p>InnoDB 的策略是尽量使用内存，因此对于一个长时间运行的库来说，未被使用的页面很少。<br>而当要读入的数据页没有在内存的时候，就必须到缓冲池中申请一个数据页。这时候只能把<strong>最久不使用</strong>的数据页从内存中淘汰掉：如果要淘汰的是一个干净页，就直接释放出来复用；但<strong>如果是脏页呢，就必须将脏页先刷到磁盘，变成干净页后才能复用。</strong></p>
+<p><strong>三、 mysql认为系统空闲，flush脏页</strong><br><strong>四、 mysql正常关闭</strong></p>
+<p> 刷脏页虽然是常态，但是出现以下这两种情况会导致性能问题<br>    1. 一个查询要淘汰的脏页个数太多，会导致查询的响应时间明显变长；<br>    2. 日志写满，更新全部堵住，写性能跌为 0，这种情况对敏感业务来说，是不能接受的。</p>
+<h3 id="InnoDB刷脏页控制策略与参数"><a href="#InnoDB刷脏页控制策略与参数" class="headerlink" title="InnoDB刷脏页控制策略与参数"></a>InnoDB刷脏页控制策略与参数</h3><p><code>innodb_io_capacity</code> 参数建议设置成磁盘的 IOPS</p>
+<pre><code>#测试磁盘随机读写的命令
+fio -filename=$filename -direct=1 -iodepth 1 -thread -rw=randrw -ioengine=psync -bs=16k -size=500M -numjobs=10 -runtime=10 -group_reporting -name=mytest</code></pre><p><code>innodb_io_capacity</code> 设置错误案例：<br>主机磁盘用的是 SSD，但是<code>innodb_io_capacity</code>的值设置的是 300。于是，InnoDB 认为这个系统的能力就这么差，所以刷脏页刷得特别慢，甚至比脏页生成的速度还慢，这样就造成了脏页累积，影响了查询和更新性能。</p>
+<p><strong>如果设计策略控制刷脏页的速度，应该参考哪些因素呢？</strong></p>
+<p>刷太慢，会出现什么情况？首先是内存脏页太多，其次是 redo log 写满。所以，InnoDB 的刷盘速度就是要参考这两个因素：</p>
+<ol>
+<li>脏页比例</li>
+<li>redo log 写盘速度。</li>
+</ol>
+<p><code>innodb_max_dirty_pages_pct</code>是脏页比例上限，默认值是 75%。<br>通过脏页比例和 redo log 写入速度算出来的两个值，取其中较大值R， 引擎就可以按照<code>innodb_io_capacity</code>定义的能力乘以 R% 来控制刷脏页的速度。</p>
+<p>InnoDB 会在后台刷脏页，而刷脏页的过程是要将内存页写入磁盘。所以，无论是你的查询语句在需要内存的时候可能要求淘汰一个脏页，还是由于刷脏页的逻辑会占用 IO 资源并可能影响到了你的更新语句，都可能是造成你从业务端感知到 MySQL“抖”了一下的原因。</p>
+<p><strong>刷脏页“连坐”参数</strong><br>MySQL 中的一个机制，在准备刷一个脏页的时候，如果这个数据页旁边的数据页刚好是脏页，就会把这个“邻居”也带着一起刷掉；而且这个把“邻居”拖下水的逻辑还可以继续蔓延，也就是对于每个邻居数据页，如果跟它相邻的数据页也还是脏页的话，也会被放到一起刷。InnoDB 中，<code>innodb_flush_neighbors = 1</code> 会有上述的“连坐”机制，为0不会。</p>
+<p>这种机制在机械硬盘上，可以减少很多随机 IO，提升系统性能。而使用SSD这类IOPS高的设备，建议设置成0，此时IOPS 往往不是瓶颈，可以设置“只刷自己”减少 SQL 语句响应时间。</p>
 
             </div>
             <hr/>
@@ -644,9 +642,9 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《索引失效实战篇 - 函数操作》
+                    《InnoDB刷脏页策略 - 为什么我的Mysql会抖一下》
                 </span> 由
-            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/03/suo-yin-shi-xiao-shi-zhan-pian-han-shu-cao-zuo/" property="cc:attributionName"
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/06/innodb-shua-zang-ye-ce-lue-wei-shi-me-wo-de-mysql-hui-dou-yi-xia/" property="cc:attributionName"
                rel="cc:attributionURL">
                 icecrea
             </a> 采用
@@ -690,23 +688,23 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
             <div class="article-badge left-badge text-color">
                 <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/03/mysql-suo/">
+                <a href="/2019/10/08/mysql-wei-yi-suo-yin-xing-neng-wen-ti-change-buffer/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/ballet" class="responsive-img" alt="Mysql锁">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-969w3d.jpg" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
                         
-                        <span class="card-title">Mysql锁</span>
+                        <span class="card-title">Mysql唯一索引性能问题 - change buffer</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Mysql中三类锁：全局锁、表级锁（表索、MDL锁）、行锁。死锁以及死锁检测。
+                            MYSQL唯一索引的更新与普通索引存在性能差异，因为无法使用change buffer。同样change buffer也有限制，不适用于更新完后立即读的情景。注意change buffer与redo log的区别。
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-03
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-08
                         </span>
                         <span class="publish-author">
                             
@@ -727,6 +725,14 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
                         <span class="chip bg-color">MYSQL</span>
                     </a>
                     
+                    <a href="/tags/索引/" target="_blank">
+                        <span class="chip bg-color">索引</span>
+                    </a>
+                    
+                    <a href="/tags/MYSQL实战45讲读书笔记/" target="_blank">
+                        <span class="chip bg-color">MYSQL实战45讲读书笔记</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -738,30 +744,30 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/">
+                <a href="/2019/10/06/mysql-suo-yin/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-ey61zo.jpg" class="responsive-img" alt="JVM问题排查指令总结">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kw1ky1.jpg" class="responsive-img" alt="Mysql索引">
                         
-                        <span class="card-title">JVM问题排查指令总结</span>
+                        <span class="card-title">Mysql索引</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            总结排查JVM,GC,CPU飙高等相关问题的常用指令
+                            索引模型优缺点、Innodb使用的B+树、索引维护成本、MYSQL5.6新增索引下推、覆盖索引、最左前缀匹配。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-29
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-06
                             </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/JVM/" class="post-category" target="_blank">
-                                    JVM
+                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
+                                    MYSQL
                                 </a>
                             
                             
@@ -771,8 +777,12 @@ B+ 树提供的这个快速定位能力，来源于同一层兄弟节点的有">
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/JVM/" target="_blank">
-                        <span class="chip bg-color">JVM</span>
+                    <a href="/tags/MYSQL/" target="_blank">
+                        <span class="chip bg-color">MYSQL</span>
+                    </a>
+                    
+                    <a href="/tags/索引/" target="_blank">
+                        <span class="chip bg-color">索引</span>
                     </a>
                     
                 </div>

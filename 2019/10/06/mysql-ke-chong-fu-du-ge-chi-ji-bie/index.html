@@ -705,23 +705,23 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
             <div class="article-badge left-badge text-color">
                 <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/08/mysql-wei-yi-suo-yin-xing-neng-wen-ti-change-buffer/">
+                <a href="/2019/10/06/mysql-suo-yin/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-8xzq62.jpg" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kw1ky1.jpg" class="responsive-img" alt="Mysql索引">
                         
-                        <span class="card-title">Mysql唯一索引性能问题 - change buffer</span>
+                        <span class="card-title">Mysql索引</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            MYSQL唯一索引的更新与普通索引存在性能差异，因为无法使用change buffer。同样change buffer也有限制，不适用于更新完后立即读的情景。注意change buffer与redo log的区别。
+                            索引模型优缺点、Innodb使用的B+树、索引维护成本、MYSQL5.6新增索引下推、覆盖索引、最左前缀匹配。
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-08
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-06
                         </span>
                         <span class="publish-author">
                             
@@ -757,23 +757,23 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/06/mysql-suo-yin/">
+                <a href="/2019/10/03/mysql-suo/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kw1ky1.jpg" class="responsive-img" alt="Mysql索引">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/ballet" class="responsive-img" alt="Mysql锁">
                         
-                        <span class="card-title">Mysql索引</span>
+                        <span class="card-title">Mysql锁</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            索引模型优缺点、Innodb使用的B+树、索引维护成本、MYSQL5.6新增索引下推、覆盖索引、最左前缀匹配。
+                            Mysql中三类锁：全局锁、表级锁（表索、MDL锁）、行锁。死锁以及死锁检测。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-06
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-03
                             </span>
                         <span class="publish-author">
                             
@@ -792,10 +792,6 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
                     
                     <a href="/tags/MYSQL/" target="_blank">
                         <span class="chip bg-color">MYSQL</span>
-                    </a>
-                    
-                    <a href="/tags/索引/" target="_blank">
-                        <span class="chip bg-color">索引</span>
                     </a>
                     
                 </div>
@@ -914,7 +910,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
 
             
             &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
-            <span class="white-color">10.4k</span>
+            <span class="white-color">11.7k</span>
             
 
             <br>

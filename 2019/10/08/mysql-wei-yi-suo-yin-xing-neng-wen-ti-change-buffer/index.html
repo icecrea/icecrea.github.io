@@ -289,7 +289,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-8xzq62.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-969w3d.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -414,6 +414,10 @@
                                 <span class="chip bg-color">索引</span>
                             </a>
                         
+                            <a href="/tags/MYSQL实战45讲读书笔记/" target="_blank">
+                                <span class="chip bg-color">MYSQL实战45讲读书笔记</span>
+                            </a>
+                        
                     </div>
                     
                 </div>
@@ -441,7 +445,7 @@
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        1.6k
+                        1.7k
                     </div>
                     
 
@@ -506,6 +510,8 @@
 <li>读page1直接从内存中返回。此处可能会疑惑，wal后是否一定要读盘，是否一定要从redo log里将数据更新后才返回。其实不需要，直接从内存返回结果</li>
 <li>读 Page 2 的时候，需要把 Page 2 从磁盘读入内存中，然后应用 change buffer 里面的操作日志，生成一个正确的版本并返回结果。</li>
 </ol>
+<p>Q:如果某次写入使用了 change buffer 机制，之后主机异常重启，是否会丢失 change buffer 和数据?</p>
+<p>不会丢失。虽然是只更新内存，但是在事务提交的时候，我们把 change buffer 的操作也记录到 redo log 里了，所以崩溃恢复的时候，change buffer 也能找回来。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>普通索引和唯一索引查询能力没差别，主要在更新性能影响。如果所有的更新后面马上伴随了查询，应该关闭change buffer。其它情况下change buffer会提高性能。如果碰上了大量插入数据慢、内存命中率低的时候，可以考虑唯一索引方向的排查思路。历史数据的归档库，可以考虑唯一索引改成普通索引。</p>
 <p>参考：<br>丁奇Mysql45讲</p>
 
@@ -716,7 +722,7 @@
                 <a href="/2019/10/08/mysql-wei-yi-suo-yin-xing-neng-wen-ti-change-buffer/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-8xzq62.jpg" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-969w3d.jpg" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
                         
                         <span class="card-title">Mysql唯一索引性能问题 - change buffer</span>
                     </div>
@@ -755,6 +761,10 @@
                         <span class="chip bg-color">索引</span>
                     </a>
                     
+                    <a href="/tags/MYSQL实战45讲读书笔记/" target="_blank">
+                        <span class="chip bg-color">MYSQL实战45讲读书笔记</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -766,18 +776,18 @@
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/06/mysql-ke-chong-fu-du-ge-chi-ji-bie/">
+                <a href="/2019/10/06/innodb-shua-zang-ye-ce-lue-wei-shi-me-wo-de-mysql-hui-dou-yi-xia/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-8xzq62.jpg" class="responsive-img" alt="Mysql一致性视图">
+                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kwj3z7.jpg" class="responsive-img" alt="InnoDB刷脏页策略 - 为什么我的Mysql会抖一下">
                         
-                        <span class="card-title">Mysql一致性视图</span>
+                        <span class="card-title">InnoDB刷脏页策略 - 为什么我的Mysql会抖一下</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            MYSQL可重复读和读提交的实现方式：一致性视图。行数据的数据版本。事务的更新逻辑：当前读
+                            InnoDB 会在后台刷脏页，而刷脏页的过程是要将内存页写入磁盘。所以，无论是你的查询语句在需要内存的时候可能要求淘汰一个脏页，还是由于刷脏页的逻辑会占用 IO 资源并可能影响到了你的更新语句，都可能是造成你从业务端感知到 MySQL“抖”了一下
                         
                     </div>
                     <div class="publish-info">
@@ -801,10 +811,6 @@
                     
                     <a href="/tags/MYSQL/" target="_blank">
                         <span class="chip bg-color">MYSQL</span>
-                    </a>
-                    
-                    <a href="/tags/MYSQL事务/" target="_blank">
-                        <span class="chip bg-color">MYSQL事务</span>
                     </a>
                     
                 </div>
@@ -923,7 +929,7 @@
 
             
             &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
-            <span class="white-color">10.4k</span>
+            <span class="white-color">11.7k</span>
             
 
             <br>
