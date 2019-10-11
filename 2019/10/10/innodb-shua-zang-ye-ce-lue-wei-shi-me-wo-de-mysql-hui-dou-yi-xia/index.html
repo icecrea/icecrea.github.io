@@ -699,7 +699,7 @@ fio -filename=$filename -direct=1 -iodepth 1 -thread -rw=randrw -ioengine=psync 
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            效率从低到高：count(字段)<count(主键 id)<count(1)≈count(*)。通过将计数直接放到单独计数表，通过事务特性解决redis存在的数据不一致问题。
+                            效率从低到高:count(字段)、count(主键 id)、count(1)、count(*)。通过将计数直接放到单独计数表，通过事务特性解决redis存在的数据不一致问题。
                         
                     </div>
                     <div class="publish-info">
