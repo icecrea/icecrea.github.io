@@ -286,7 +286,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-8xzq62.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-4vkp38.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -471,7 +471,7 @@
 <blockquote>
 <p>低水位：数组里面事务 ID 的最小值记。<br>高水位：当前系统里面已经创建过的事务 ID 的最大值加 1 。<br>视图数组和高水位，就组成了当前事务的一致性视图（read-view）。</p>
 </blockquote>
-<p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/%E4%BA%8B%E5%8A%A1%E6%95%B0%E7%BB%84.png" alt><br>一个数据版本的 row trx_id，有以下可能：</p>
+<p><img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/mysql/mysql45/08_view/view.png" alt><br>一个数据版本的 row trx_id，有以下可能：</p>
 <pre><code>1. 在绿色部分，表示这个版本是已提交的事务或者是当前事务自己生成的，这个数据是可见的；
 2. 如果落在红色部分，表示这个版本是由将来启动的事务生成的，是肯定不可见的；
 3. 如果落在黄色部分，那就包括两种情况
@@ -481,7 +481,7 @@
   `k` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
-insert into t(id, k) values(1,1),(2,2);</code></pre><p><img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/Mysql/MVCC.png" alt><br>图中事务B查询结果为3，事务A查询结果为1。下面解释原因：</p>
+insert into t(id, k) values(1,1),(2,2);</code></pre><p><img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/mysql/mysql45/08_view/case.png" alt><br>图中事务B查询结果为3，事务A查询结果为1。下面解释原因：</p>
 <p>可以先做如下假设</p>
 <pre><code>1. 事务 A 开始前，系统里面只有一个活跃事务 ID 是 99；
 2. 事务 A、B、C 的版本号分别是 100、101、102，且当前系统里只有这四个事务；
@@ -708,7 +708,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
                 <a href="/2019/10/08/mysql-wei-yi-suo-yin-xing-neng-wen-ti-change-buffer/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-969w3d.jpg" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
+                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-73xg3v.png" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
                         
                         <span class="card-title">Mysql唯一索引性能问题 - change buffer</span>
                     </div>
@@ -760,7 +760,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
                 <a href="/2019/10/06/mysql-suo-yin/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1255483371.cos.ap-beijing.myqcloud.com/%E6%96%87%E7%AB%A0%E5%B0%81%E9%9D%A2/wallhaven-kw1ky1.jpg" class="responsive-img" alt="Mysql索引">
+                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-957d2d.jpg" class="responsive-img" alt="Mysql索引">
                         
                         <span class="card-title">Mysql索引</span>
                     </div>
@@ -914,7 +914,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
 
             
             &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
-            <span class="white-color">12.9k</span>
+            <span class="white-color">13.8k</span>
             
 
             <br>
@@ -937,6 +937,10 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
             
         </div>
         <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/icecrea" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-github"></i>
+    </a>
+
 
 
     <a href="mailto:798167096@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
@@ -948,6 +952,10 @@ mysql&gt; select k from t where id=1 for update;</code></pre><p>Q：事务的可
 
 
 
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=798167096" class="tooltipped" data-tooltip="QQ联系我: 798167096" data-position="top" data-delay="50">
+        <i class="fa fa-qq"></i>
+    </a>
 
 
 
