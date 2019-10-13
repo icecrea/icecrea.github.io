@@ -287,7 +287,7 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-4332e3.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-4332e3.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -463,7 +463,7 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h2 id="CLOSE-WAIT的排查之旅"><a href="#CLOSE-WAIT的排查之旅" class="headerlink" title="CLOSE-WAIT的排查之旅"></a>CLOSE-WAIT的排查之旅</h2><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>通过监控中发现，线上机器TCP连接中，CLOSE-WAIT状态的量较高。对该问题进行排查</p>
-<h4 id="TCP基础介绍"><a href="#TCP基础介绍" class="headerlink" title="TCP基础介绍"></a>TCP基础介绍</h4><p>首先介绍下TCP连接的状态，四次挥手关闭连接的状态变化如下图所示。<br>从图中可以看到，<strong>主动关闭</strong>的一方会发出FIN包，被动关闭的一方响应ACK包，此时被动关闭的一方进入CLOSE-WAIT状态。如果一切正常，被动关闭的一方也会发出FIN包，进入LAST-ACK状态。<br><img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/network/tcp_close_geek.jpg" alt></p>
+<h4 id="TCP基础介绍"><a href="#TCP基础介绍" class="headerlink" title="TCP基础介绍"></a>TCP基础介绍</h4><p>首先介绍下TCP连接的状态，四次挥手关闭连接的状态变化如下图所示。<br>从图中可以看到，<strong>主动关闭</strong>的一方会发出FIN包，被动关闭的一方响应ACK包，此时被动关闭的一方进入CLOSE-WAIT状态。如果一切正常，被动关闭的一方也会发出FIN包，进入LAST-ACK状态。<br><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_close_geek.jpg" alt></p>
 <p>通常情况下，服务器中CLOSE-WAIT状态停留时间很短，<strong>如果发现大量CLOSE-WAIT状态，说明被动关闭的一方没有及时发出FIN包</strong></p>
 <p>可能导致问题的原因：</p>
 <ul>
@@ -492,7 +492,7 @@ TCP基础介绍首先介绍下TCP连接的状态，四次挥手关闭连接的�
 <p>这里就需要先普及下Http keepalive机制。Http的Keep alive是一种TCP连接复用机制，在同一个TCP连接上传送多个HTTP，提高Socket的效率。而TCP的keep-alive是TCP的一种检测TCP连接状况的保鲜机制，注意两者区分。</p>
 <p>Http1.1之前（未显示指定Connection:keep-alive）每个http请求都要求打开一个tcp socket连接，并且使用一次之后就断开这个tcp连接。对于如今这种一个页面少则几个多则几十几百个的请求的现状来说这显然不是一种高效的使用方式，http1.1之后默认开启keep-alive，通过使用keep-alive机制，可以减少tcp连接建立次数，以此提高性能和提高http服务器的吞吐率(更少的tcp连接意味着更少的系统内核调用,socket的accept()和close()调用。</p>
 <p>然而keep-alive如果配置不当同样存在风险，长时间的tcp连接容易导致系统资源无效占用。正确地设置keep-alive timeout时间非常重要。那么是否是因为keep-alive超时，发起的主动关闭连接呢？结合tcpdump结果分析</p>
-<p><img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/network/closewait_wireshark.png" alt></p>
+<p><img src="https://icecrea-1300414836.file.myqcloud.com/network/closewait_wireshark.png" alt></p>
 <p>此处我使用wireshark，对上面的抓包结果分析，从图中圈红部分我们可以发现，最后一次ACK和发起主动关闭间隔30s，多个case结果均相同。那么对应的远程主机，也就是ng的keep-alive timeout应该是30，跟运维确认ng配置，得到验证<code>keepalive_timeout  30;  client_body_timeout 30s; client_header_timeout 30s;</code></p>
 <h4 id="TCP连接与Finalize机制"><a href="#TCP连接与Finalize机制" class="headerlink" title="TCP连接与Finalize机制"></a>TCP连接与Finalize机制</h4><p>在观察监控时，还发现一个奇怪的现象，每过5分钟，CLOSE-WAIT的量变断崖式下降。第一反应是否是系统GC掉了？观察GC日志，发现时间点吻合。CLOSE_WAIT变更为LAST_ACK的tcp连接，同时都伴随着gc的发生。</p>
 <p>为什么gc会导致tcp连接的关闭呢？这是就不得不提java的finalize机制。</p>
@@ -719,7 +719,7 @@ protected void close() throws IOException {
                 <a href="/2019/09/29/jvm-wen-ti-pai-cha-zhi-ling-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-4lmgqr.jpg" class="responsive-img" alt="JVM问题排查指令总结">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-4lmgqr.jpg" class="responsive-img" alt="JVM问题排查指令总结">
                         
                         <span class="card-title">JVM问题排查指令总结</span>
                     </div>
@@ -767,7 +767,7 @@ protected void close() throws IOException {
                 <a href="/2019/09/27/da-jian-bo-ke/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-g8mj2e.png" class="responsive-img" alt="Hexo+Github搭建博客指南">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-g8mj2e.png" class="responsive-img" alt="Hexo+Github搭建博客指南">
                         
                         <span class="card-title">Hexo+Github搭建博客指南</span>
                     </div>

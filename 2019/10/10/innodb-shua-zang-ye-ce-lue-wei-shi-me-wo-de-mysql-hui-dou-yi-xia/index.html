@@ -286,7 +286,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-4l66ll.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-4l66ll.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -461,7 +461,7 @@
 <blockquote>
 <p>当内存数据页跟磁盘数据页内容不一致的时候，我们称这个内存页为“脏页”。<br>内存数据写入到磁盘后，内存和磁盘上的数据页的内容就一致了，称为“干净页”。</p>
 </blockquote>
-<h3 id="什么情况下会刷脏页？"><a href="#什么情况下会刷脏页？" class="headerlink" title="什么情况下会刷脏页？"></a>什么情况下会刷脏页？</h3><p>刷脏页有下列四种场景：<br><strong>一、 redo log 写满了，要 flush 脏页</strong><br><img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/mysql/mysql45/12_flush/redolog.jpg" alt><br>redo log 写满了，系统会停止所有更新操作，把 checkpoint 往前推进，redo log 留出空间可以继续写。<br>checkpoint 位置从 CP 推进到 CP’，就需要将两个点之间的日志（浅绿色部分），对应的所有脏页都 flush 到磁盘上。之后，图中从 write pos 到 CP’之间就是可以再写入的 redo log 的区域。<br>innodb要尽量避免，会堵住所有更新。</p>
+<h3 id="什么情况下会刷脏页？"><a href="#什么情况下会刷脏页？" class="headerlink" title="什么情况下会刷脏页？"></a>什么情况下会刷脏页？</h3><p>刷脏页有下列四种场景：<br><strong>一、 redo log 写满了，要 flush 脏页</strong><br><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql45/12_flush/redolog.jpg" alt><br>redo log 写满了，系统会停止所有更新操作，把 checkpoint 往前推进，redo log 留出空间可以继续写。<br>checkpoint 位置从 CP 推进到 CP’，就需要将两个点之间的日志（浅绿色部分），对应的所有脏页都 flush 到磁盘上。之后，图中从 write pos 到 CP’之间就是可以再写入的 redo log 的区域。<br>innodb要尽量避免，会堵住所有更新。</p>
 <p><strong>二、内存不够用了，要先将脏页写到磁盘 **<br>这种情况是常态。</strong>InnoDB 用缓冲池（buffer pool）管理内存**，缓冲池中的内存页有三种状态：</p>
 <ol>
 <li>还没有使用的；</li>
@@ -691,7 +691,7 @@ fio -filename=$filename -direct=1 -iodepth 1 -thread -rw=randrw -ioengine=psync 
                 <a href="/2019/10/11/count-han-shu-xing-neng-bi-jiao-yu-you-hua-she-ji/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-43ko39.jpg" class="responsive-img" alt="count函数性能比较与优化设计">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-43ko39.jpg" class="responsive-img" alt="count函数性能比较与优化设计">
                         
                         <span class="card-title">count函数性能比较与优化设计</span>
                     </div>
@@ -739,7 +739,7 @@ fio -filename=$filename -direct=1 -iodepth 1 -thread -rw=randrw -ioengine=psync 
                 <a href="/2019/10/08/mysql-wei-yi-suo-yin-xing-neng-wen-ti-change-buffer/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-73xg3v.png" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-73xg3v.png" class="responsive-img" alt="Mysql唯一索引性能问题 - change buffer">
                         
                         <span class="card-title">Mysql唯一索引性能问题 - change buffer</span>
                     </div>

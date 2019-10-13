@@ -289,7 +289,7 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-957d2d.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-957d2d.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
@@ -494,8 +494,8 @@
 <h3 id="最左前缀原则"><a href="#最左前缀原则" class="headerlink" title="最左前缀原则"></a>最左前缀原则</h3><p><strong>B+ 树这种索引结构，可以利用索引的“最左前缀”，来定位记录。</strong><br>用（name，age）这个联合索引来分析：SQL 语句的条件是<code>where name like ‘张 %’</code>，也能够用上这个索引。<br>只要满足最左前缀，就可以利用索引来加速检索。这个最左前缀可以是联合索引的最左 N 个字段，也可以是字符串索引的最左 M 个字符。</p>
 <h3 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h3><p>以市民表的联合索引（name, age）为例。检索出表中“名字第一个字是张，而且年龄是 10 岁的所有男孩”<br><code>select * from tuser where name like &#39;张 %&#39; and age=10 and ismale=1;</code><br>前缀索引规则，语句在搜索索引树的时候，只能用 “张”，找到第一个满足条件的记录 ID3。之后呢？则比较剩余字段。</p>
 <p>在 MySQL 5.6 之前，只能从 ID3 开始一个个回表。到主键索引上找出数据行，再对比字段值。<br>而 MySQL 5.6 引入的索引下推优化（index condition pushdown)， 可以在索引遍历过程中，对索引中包含的字段先做判断，直接过滤掉不满足条件的记录，减少回表次数。</p>
-<p><img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/mysql/mysql45/04_index/no_index_condition_pushdown.jpg" alt="无索引下推"><br>无索引下推：在 (name,age) 索引里面我特意去掉了 age 的值，这个过程 InnoDB 并不会去看 age 的值，只是按顺序把“name 第一个字是’张’”的记录一条条取出来回表。因此，需要回表 4 次。</p>
-<p><img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/mysql/mysql45/04_index/index_condition_pushdown.jpg" alt="索引下推"><br>索引下推：InnoDB 在 (name,age) 索引内部就判断了 age 是否等于 10，对于不等于 10 的记录，直接判断并跳过。在我们的这个例子中，只需要对 ID4、ID5 这两条记录回表取数据判断，就只需要回表 2 次。</p>
+<p><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql45/04_index/no_index_condition_pushdown.jpg" alt="无索引下推"><br>无索引下推：在 (name,age) 索引里面我特意去掉了 age 的值，这个过程 InnoDB 并不会去看 age 的值，只是按顺序把“name 第一个字是’张’”的记录一条条取出来回表。因此，需要回表 4 次。</p>
+<p><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql45/04_index/index_condition_pushdown.jpg" alt="索引下推"><br>索引下推：InnoDB 在 (name,age) 索引内部就判断了 age 是否等于 10，对于不等于 10 的记录，直接判断并跳过。在我们的这个例子中，只需要对 ID4、ID5 这两条记录回表取数据判断，就只需要回表 2 次。</p>
 <hr>
 <p>Q：下列重建索引K与主键索引方式是否正确：</p>
 <pre><code>alter table T drop index k;
@@ -711,7 +711,7 @@ alter table T add primary key(id);</code></pre><p>A：重建索引 k 的做法�
                 <a href="/2019/10/07/mysql-yi-zhi-xing-shi-tu/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-4vkp38.jpg" class="responsive-img" alt="Mysql一致性视图">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-4vkp38.jpg" class="responsive-img" alt="Mysql一致性视图">
                         
                         <span class="card-title">Mysql一致性视图</span>
                     </div>
@@ -763,7 +763,7 @@ alter table T add primary key(id);</code></pre><p>A：重建索引 k 的做法�
                 <a href="/2019/10/03/mysql-suo/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-969w3d.jpg" class="responsive-img" alt="Mysql锁">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-969w3d.jpg" class="responsive-img" alt="Mysql锁">
                         
                         <span class="card-title">Mysql锁</span>
                     </div>
