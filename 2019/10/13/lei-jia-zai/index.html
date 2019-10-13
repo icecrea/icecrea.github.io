@@ -5,10 +5,9 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="keywords" content="类加载流程与顺序详解, icecrea">
-    <meta name="description" content="类加载@(JVM)[类加载]
-类从被加载到虚拟机内存到卸出内存为止，它的整个生命周期虚拟机规范中并没有强制约束何时进行加载，但是规范严格规定了有且只有下列五种情况必须对类进行初始化（加载、验证、准备都会随着发生）：
+    <meta name="description" content="类加载类从被加载到虚拟机内存到卸出内存为止，它的整个生命周期虚拟机规范中并没有强制约束何时进行加载，但是规范严格规定了有且只有下列五种情况必须对类进行初始化（加载、验证、准备都会随着发生）：
 
-遇到 new、gets">
+遇到 new、getstatic、putsta">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -460,8 +459,7 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="类加载"><a href="#类加载" class="headerlink" title="类加载"></a>类加载</h2><p>@(JVM)[类加载]</p>
-<p>类从被加载到虚拟机内存到卸出内存为止，它的整个生命周期<br><img src="https://icecrea-1300414836.file.myqcloud.com/jvm/load_class.png" alt><br>虚拟机规范中并没有强制约束何时进行加载，但是规范严格规定了有且只有下列五种情况必须对类进行初始化（加载、验证、准备都会随着发生）：</p>
+                <h2 id="类加载"><a href="#类加载" class="headerlink" title="类加载"></a>类加载</h2><p>类从被加载到虚拟机内存到卸出内存为止，它的整个生命周期<br><img src="https://icecrea-1300414836.file.myqcloud.com/jvm/load_class.png" alt><br>虚拟机规范中并没有强制约束何时进行加载，但是规范严格规定了有且只有下列五种情况必须对类进行初始化（加载、验证、准备都会随着发生）：</p>
 <ol>
 <li><p>遇到 new、getstatic、putstatic、invokestatic 这四条字节码指令时，如果类没有进行过初始化，则必须先触发其初始化。最常见的生成这 4 条指令的场景是：</p>
 <ul>
