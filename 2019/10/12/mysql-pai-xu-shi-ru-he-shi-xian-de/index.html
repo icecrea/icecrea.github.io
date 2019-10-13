@@ -438,7 +438,7 @@ CREATE TABLE `t` (
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        887
+                        932
                     </div>
                     
 
@@ -492,7 +492,8 @@ CREATE TABLE `t` (
 <li>按排序结果取前1000行，并按照id的值回到原表取city,name,age三个字段给客户端</li>
 </ul>
 <p>可以看出，比全字段排序多了一次回表，从sort_buffer排序后，还需要再回主键索引取其它需要的值。</p>
-<h3 id="全字段排序与rowid排序比较"><a href="#全字段排序与rowid排序比较" class="headerlink" title="全字段排序与rowid排序比较"></a>全字段排序与rowid排序比较</h3><p>MySQL 的一个设计思想：<strong>如果内存够，就要多利用内存，尽量减少磁盘访问。</strong>对于 InnoDB 表来说，rowid 排序会要求回表多造成磁盘读，因此不会被优先选择。</p>
+<h3 id="全字段排序与rowid排序比较"><a href="#全字段排序与rowid排序比较" class="headerlink" title="全字段排序与rowid排序比较"></a>全字段排序与rowid排序比较</h3><p>MySQL 的一个设计思想：<strong>如果内存够，就要多利用内存，尽量减少磁盘访问。</strong></p>
+<p>对于 <strong>InnoDB 表</strong>来说，rowid 排序会要求回表多造成磁盘读，因此不会被优先选择。<br>可以想到，对于内存表，回表过程只是简单地根据数据行的位置，直接访问内存得到数据，不会导致多访问磁盘。</p>
 <p>当然，并不是所有order by 都需要排序操作，MySQL 之所以需要生成临时表，并且在临时表上做排序操作，其原因是原来的数据都是无序的。对本文例子来说，如果从 city 这个索引上取出来的行，天然就是按照 name 递增排序的话还需要排序呢？</p>
 <p>假如有(city, name)联合索引，在这个索引里面，我们依然可以用树搜索的方式定位到第一个满足 city=’杭州’的记录，并且额外确保了，接下来按顺序取“下一条记录”的遍历过程中，只要 city 的值是杭州，name 的值就一定是有序的。查询过程不需要临时表，也不需要排序。Extra 字段中没有 Using filesort 了，也就是不需要排序了。</p>
 <p>参考：<br>丁奇：mysql实战45讲</p>
@@ -696,47 +697,45 @@ CREATE TABLE `t` (
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
-            </div>
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/12/mysql-pai-xu-shi-ru-he-shi-xian-de/">
+                <a href="/2019/10/13/lei-jia-zai/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.cos.ap-beijing.myqcloud.com/cover/wallhaven-8387q1.jpg" class="responsive-img" alt="Mysql排序是如何实现的？">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-zxmd1g.jpg" class="responsive-img" alt="类加载流程与顺序详解">
                         
-                        <span class="card-title">Mysql排序是如何实现的？</span>
+                        <span class="card-title">类加载流程与顺序详解</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            MYSQL的两种排序策略：全字段排序和rowid排序。前者可能导致使用临时文件排序，后者增加排序后的回表磁盘读。可以通过联合索引使得索引本身有序，从而省去排序操作。
+                            类加载分为加载、连接、初始化三个阶段，其中连接又分为验证、准备、解析阶段。
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-12
-                            </span>
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-13
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
-                                    MYSQL
+                            <a href="/categories/JVM/" class="post-category" target="_blank">
+                                    JVM
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
-
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/MYSQL/" target="_blank">
-                        <span class="chip bg-color">MYSQL</span>
+                    <a href="/tags/JVM/" target="_blank">
+                        <span class="chip bg-color">JVM</span>
                     </a>
                     
                 </div>
@@ -903,7 +902,7 @@ CREATE TABLE `t` (
 
             
             &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
-            <span class="white-color">13.8k</span>
+            <span class="white-color">15.9k</span>
             
 
             <br>
