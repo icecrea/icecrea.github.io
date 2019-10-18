@@ -5,8 +5,7 @@
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
     <meta name="keywords" content="一次升级Mysql-connector-java版本引发的血案, icecrea">
-    <meta name="description" content="一次升级Mysql-connector-java版本引发的血案@(Mysql工作学习笔记)
-背景一次线上发布，导致派单失败，更新SQL语句报错，大意为找不到对应的记录。然而DIFF改动，并未涉及该处代码，唯一和数据库相关的改动，是Maven">
+    <meta name="description" content="一次升级Mysql-connector-java版本引发的血案背景一次线上发布，导致派单失败，更新SQL语句报错，大意为找不到对应的记录。然而DIFF改动，并未涉及该处代码，唯一和数据库相关的改动，是Maven版本升级，将mysql-con">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -435,7 +434,7 @@
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        496
+                        489
                     </div>
                     
 
@@ -458,8 +457,7 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="一次升级Mysql-connector-java版本引发的血案"><a href="#一次升级Mysql-connector-java版本引发的血案" class="headerlink" title="一次升级Mysql-connector-java版本引发的血案"></a>一次升级Mysql-connector-java版本引发的血案</h2><p>@(Mysql工作学习笔记)</p>
-<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>一次线上发布，导致派单失败，更新SQL语句报错，大意为找不到对应的记录。<br>然而DIFF改动，并未涉及该处代码，唯一和数据库相关的改动，是Maven版本升级，将<code>mysql-connector-java</code>版本从5.1.21升级到5.1.36。初步怀疑是<code>mysql-connector-java</code>版本升级导致异常。对该问题进行排查。</p>
+                <h2 id="一次升级Mysql-connector-java版本引发的血案"><a href="#一次升级Mysql-connector-java版本引发的血案" class="headerlink" title="一次升级Mysql-connector-java版本引发的血案"></a>一次升级Mysql-connector-java版本引发的血案</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>一次线上发布，导致派单失败，更新SQL语句报错，大意为找不到对应的记录。<br>然而DIFF改动，并未涉及该处代码，唯一和数据库相关的改动，是Maven版本升级，将<code>mysql-connector-java</code>版本从5.1.21升级到5.1.36。初步怀疑是<code>mysql-connector-java</code>版本升级导致异常。对该问题进行排查。</p>
 <h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>这是一段派单的代码。逻辑是先新增，再查询出新增的订单进行更新。<br><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql%E5%8D%87%E7%BA%A7%E8%B8%A9%E5%9D%91/code.png" alt></p>
 <p>在代码中，使用了更新时间字段<code>last_updated</code> 做乐观锁，但是该字段数据库中为timestamp。<strong>对于msyql中时间和日期类型，MySQL在5.6.4以及更高版本提供了对秒以下精度时间的存储支持，在以前的版本是会将秒以下的精度忽略掉的。</strong> 未定义精度为秒级别。查询时候查询条件有<code>last_updated</code>，所以这是一个秒级别的乐观锁。<br><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql%E5%8D%87%E7%BA%A7%E8%B8%A9%E5%9D%91/code_sql.png" alt></p>
 <h3 id="源码差异"><a href="#源码差异" class="headerlink" title="源码差异"></a>源码差异</h3><p>5.1.36版本会判断nano小数秒是否为0，如果不为0会在sql中拼接小数秒。例如<code>2019-07-31 16:41:31.088</code>格式。这样会导致我们更新语句里 ，where的匹配条件匹配不到。</p>
@@ -874,7 +872,7 @@
 
             
             &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
-            <span class="white-color">16.9k</span>
+            <span class="white-color">17.7k</span>
             
 
             <br>
