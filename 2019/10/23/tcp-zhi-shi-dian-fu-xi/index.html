@@ -4,8 +4,9 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="一次升级Mysql-connector-java版本引发的血案, icecrea">
-    <meta name="description" content="一次升级Mysql-connector-java版本引发的血案背景一次线上发布，导致派单失败，更新SQL语句报错，大意为找不到对应的记录。然而DIFF改动，并未涉及该处代码，唯一和数据库相关的改动，是Maven版本升级，将mysql-con">
+    <meta name="keywords" content="TCP知识点复习, icecrea">
+    <meta name="description" content="TCP知识点复习TCP如何实现可靠连接？TCP协议通过使用连续ARQ协议和滑动窗口协议，来保证数据传输的正确性，从而提供可靠的传输。TCP 的可靠连接是靠 seq（ sequence numbers 序列号）来达成的。
+ARQ协议，即自动重">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +14,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>一次升级Mysql-connector-java版本引发的血案 | icecrea</title>
+    <title>TCP知识点复习 | icecrea</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -286,13 +287,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-0prol9.png')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('https://icecrea-1300414836.file.myqcloud.com/cover/tcpreview.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        一次升级Mysql-connector-java版本引发的血案
+                        TCP知识点复习
                     </div>
                 </div>
             </div>
@@ -403,8 +404,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/MYSQL/" target="_blank">
-                                <span class="chip bg-color">MYSQL</span>
+                            <a href="/tags/计算机网络/" target="_blank">
+                                <span class="chip bg-color">计算机网络</span>
                             </a>
                         
                     </div>
@@ -415,8 +416,8 @@
                     <div class="post-cate">
                         <i class="fa fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
-                                MYSQL
+                            <a href="/categories/计算机网络/" class="post-category" target="_blank">
+                                计算机网络
                             </a>
                         
                     </div>
@@ -427,21 +428,21 @@
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-10-15
+                    2019-10-23
                 </div>
 
                 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        489
+                        2.4k
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        1 分
+                        8 分
                     </div>
                     
                 
@@ -457,14 +458,41 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="一次升级Mysql-connector-java版本引发的血案"><a href="#一次升级Mysql-connector-java版本引发的血案" class="headerlink" title="一次升级Mysql-connector-java版本引发的血案"></a>一次升级Mysql-connector-java版本引发的血案</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>一次线上发布，导致派单失败，更新SQL语句报错，大意为找不到对应的记录。<br>然而DIFF改动，并未涉及该处代码，唯一和数据库相关的改动，是Maven版本升级，将<code>mysql-connector-java</code>版本从5.1.21升级到5.1.36。初步怀疑是<code>mysql-connector-java</code>版本升级导致异常。对该问题进行排查。</p>
-<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>这是一段派单的代码。逻辑是先新增，再查询出新增的订单进行更新。<br><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql%E5%8D%87%E7%BA%A7%E8%B8%A9%E5%9D%91/code.png" alt></p>
-<p>在代码中，使用了更新时间字段<code>last_updated</code> 做乐观锁，但是该字段数据库中为timestamp。<strong>对于msyql中时间和日期类型，MySQL在5.6.4以及更高版本提供了对秒以下精度时间的存储支持，在以前的版本是会将秒以下的精度忽略掉的。</strong> 未定义精度为秒级别。查询时候查询条件有<code>last_updated</code>，所以这是一个秒级别的乐观锁。<br><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql%E5%8D%87%E7%BA%A7%E8%B8%A9%E5%9D%91/code_sql.png" alt></p>
-<h3 id="源码差异"><a href="#源码差异" class="headerlink" title="源码差异"></a>源码差异</h3><p>5.1.36版本会判断nano小数秒是否为0，如果不为0会在sql中拼接小数秒。例如<code>2019-07-31 16:41:31.088</code>格式。这样会导致我们更新语句里 ，where的匹配条件匹配不到。</p>
-<p>结合源码来分析，相关代码在 <code>com.mysql.jdbc.PreparedStatement#setTimestampInternal</code></p>
-<p>5.1.21版本<br><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql%E5%8D%87%E7%BA%A7%E8%B8%A9%E5%9D%91/source_5121.png" alt></p>
-<p>5.1.36版本，如果小数秒不等于0，就会传入参数<br><img src="https://icecrea-1300414836.file.myqcloud.com/mysql/mysql%E5%8D%87%E7%BA%A7%E8%B8%A9%E5%9D%91/source_5136.png" alt></p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>从Java代码可以看出，我们是通过new Date()生成的时间戳，是包含小数秒的。新增操作时数据库timestamp字段忽略了小数秒，没有问题。而在更新时使用该时间戳做乐观锁，因为mysql-connector高版本的时间戳截取逻辑变化，导致传入的参数包含小数秒，与库中不含小数秒的时间戳无法匹配，导致了更新失败问题。</p>
+                <h3 id="TCP知识点复习"><a href="#TCP知识点复习" class="headerlink" title="TCP知识点复习"></a>TCP知识点复习</h3><h3 id="TCP如何实现可靠连接？"><a href="#TCP如何实现可靠连接？" class="headerlink" title="TCP如何实现可靠连接？"></a>TCP如何实现可靠连接？</h3><p>TCP协议通过使用<strong>连续ARQ协议</strong>和<strong>滑动窗口协议</strong>，来保证数据传输的正确性，从而提供可靠的传输。<br>TCP 的可靠连接是靠 seq（ sequence numbers 序列号）来达成的。</p>
+<p>ARQ协议，即自动重传请求（Automatic Repeat-reQuest），是OSI模型中数据链路层和传输层的错误纠正协议之一。它通过使用<strong>确认</strong>和<strong>超时</strong>这两个机制，在不可靠服务的基础上实现可靠的信息传输。如果发送方在发送后一段时间之内没有收到确认帧，它通常会重新发送。</p>
+<p><strong>停止等待ARQ协议</strong>：处于发送一个分组、等待确认、接收确认后再发送一个分组的流程。如果流程中出现出现差错（如接收到分组检测时差错，或者传输过程丢失分组），接收方不会发送任何消息。它的可靠性通过<strong>超时重传</strong>实现：即发送方只要超过了一段时间仍然没有收到确认，就认为刚才发送的分组丢失了，所以它会重传刚刚的发送过的分组，通过超时计时器实现。信道利用率低。</p>
+<p>注意点：可能重传，所以需要保留已发送还未确认的分组。分组和确认分组信息都应该有各自的编号，用来标示每一个分组和确认信息。</p>
+<p><strong>连续ARQ协议</strong>：<br>发送方可以连续发送多个分组，然后再等待这些分组的ACK。不必每发完一个分组就停下来等待对方确认。连续ARQ协议通常是结合滑动窗口协议来使用。</p>
+<p>接收方一般都是采用<strong>累积确认</strong>的方式。也就是说接收方不必对收到的分组逐个发送确认。而是在收到几个分组后，对按序到达的最后一个分组发送确认。</p>
+<h3 id="讲下TCP的拥塞控制？"><a href="#讲下TCP的拥塞控制？" class="headerlink" title="讲下TCP的拥塞控制？"></a>讲下TCP的拥塞控制？</h3><p>拥塞控制就是对发送方拥塞窗口cwnd的调整，TCP常用的拥塞控制四种算法如下：<br>慢开始（Slow-start)，拥塞避免（Congestion Avoidance)，快重传（Fast Restrangsmit)和快恢复（Fast Recovery）</p>
+<p><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B61.png" alt><br><strong>慢开始</strong>：<br>当主机开始发送数据时，由小到大逐渐增大拥塞窗口cwnd数值（即 发送窗口数值），试探网络的拥塞情况。这里“慢”指一开始发送报文段拥塞窗口设置小（为1）。每经过一个传输轮次，拥塞窗口就加倍。</p>
+<p><strong>拥塞避免</strong>：<br>使得拥塞窗口（cwnd）按线性规律 缓慢增长：每经过一个往返时间RTT，发送方的拥塞窗口（cwnd）加1。拥塞避免 并不可避免拥塞，只是将拥塞窗口按现行规律缓慢增长，使得网络比较不容易出现拥塞。</p>
+<p><strong>快重传</strong><br>接收方 每收到一个<strong>失序</strong>的报文段后 就立即发出重复确认（为的是使发送方及早知道有报文段没有到达对方），而不要等到自己发送数据时才进行捎带确认。发送方只要一连收到3个重复确认就立即重传对方尚未收到的报文段，而不必 继续等待设置的重传计时器到期。</p>
+<p><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/%E5%BF%AB%E9%87%8D%E4%BC%A0.png" alt></p>
+<p><strong>快恢复</strong></p>
+<p>当发送方连续收到3个重复确认后，就执行“乘法减小”算法，把ssthresh门限减半。但是接下去并不执行慢开始算法。<br>考虑到如果网络出现拥塞的话就不会收到好几个重复的确认，所以发送方现在认为网络可能没有出现拥塞。所以此时不执行慢开始算法，而是将cwnd设置为ssthresh的大小，然后执行拥塞避免算法。如下图：</p>
+<p><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B62.png" alt></p>
+<h3 id="TCP与UDP区别？"><a href="#TCP与UDP区别？" class="headerlink" title="TCP与UDP区别？"></a>TCP与UDP区别？</h3><p><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/tcpudp.png" alt></p>
+<p>UDP包头格式（8字节）<br><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/udp%E5%A4%B4%E7%BB%93%E6%9E%84.png" alt></p>
+<p>TCP包头格式（20字节起）<br><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/tcp%E5%A4%B4%E7%BB%93%E6%9E%84.png" alt></p>
+<h3 id="TCP三次握手"><a href="#TCP三次握手" class="headerlink" title="TCP三次握手"></a>TCP三次握手</h3><p><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png" alt></p>
+<p>默认发送端A，接收端B<br><strong>如果A发给B的确认丢了，该如何？</strong><br>A会超时重传这个ACK吗？不会！TCP不会为没有数据的ACK超时重传。那该如何是好？B如果没有收到A的ACK，会超时重传自己的SYN同步信号，一直到收到A的ACK为止。</p>
+<p><strong>第一个包，即A发给B的SYN 中途被丢，没有到达B</strong><br>A会周期性超时重传，直到收到B的确认</p>
+<p><strong>第二个包，即B发给A的SYN +ACK 中途被丢，没有到达A</strong><br>B会周期性超时重传，直到收到A的确认</p>
+<p><strong>第三个包,即A发给B的ACK 中途被丢,没有到达B</strong><br>A发完ACK,单方面认为TCP为 Established状态,而B显然认为TCP为Active状态:<br>a. 假定此时双方都没有数据发送,B会周期性超时重传,直到收到A的确认,收到之后B的TCP 连接也为 Established状态,双向可以发包<br>b. 假定此时A有数据发送,B收到A的 Data + ACK,自然会切换为established 状态,并接受A的 Data<br>c. 假定B有数据发送,数据发送不了,会一直周期性超时重传SYN + ACK,直到收到A的确认才可以发送数据</p>
+<h4 id="为什么不两次握手？"><a href="#为什么不两次握手？" class="headerlink" title="为什么不两次握手？"></a>为什么不两次握手？</h4><p>假设是两次握手情况：A发送SYN，由于网络等问题没有确认，导致超时重发了几次。AB建立连接后简单通讯，结束连接。而此时，B又收到了A延迟的SYN，又认为是个正常请求重新建立连接。而这个连接不进行也不中断。不合理</p>
+<h3 id="TCP四次挥手"><a href="#TCP四次挥手" class="headerlink" title="TCP四次挥手"></a>TCP四次挥手</h3><p><img src="https://icecrea-1300414836.file.myqcloud.com/network/tcp_review/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" alt></p>
+<h4 id="为什么A在TIME-WAIT状态必须等待2MSL时间？"><a href="#为什么A在TIME-WAIT状态必须等待2MSL时间？" class="headerlink" title="为什么A在TIME-WAIT状态必须等待2MSL时间？"></a>为什么A在TIME-WAIT状态必须等待2MSL时间？</h4><ol>
+<li><strong>保证A发送的最后一个ACK报文段能到达B</strong><br>这个ACK报文段有可能丢失，处在LAST-ACK状态的B收不到对已发送的FIN+ACK报文段的确认，B会超时重传这个FIN+ACK报文段，A可以在2MSL时间内收到重传的报文段，再重传一次确认，重启计数器。如果发送了ACK直接关闭不等待2MSL，则无法收到B重传的FIN+ACK报文段，B无法进入CLOSED状态。</li>
+<li><strong>防止“已失效的连接请求报文段”出现在本连接中</strong><br>A发送完最后一个ACK，再经过2MSL，就可以使本连接持续时间内产生的所有报文段都从网络中消失。可以使下一个新连接中不会出现旧连接请求报文段。</li>
+</ol>
+<h3 id="超时重传的定时器时间是如何设置的？"><a href="#超时重传的定时器时间是如何设置的？" class="headerlink" title="超时重传的定时器时间是如何设置的？"></a>超时重传的定时器时间是如何设置的？</h3><p>时间不宜过短，时间必须大于往返时间 RTT，否则会引起不必要的重传。也不宜过长，这样超时时间变长，访问就变慢了。TCP 通过采样RTT时间 ，然后进行加权平均，算出一个值，而且这个值还是要不断变化的，因为网络状况不断的变化。除了采样 RTT，还要采样 RTT 的波动范围，计算出一个估计的超时时间。由于重传时间是不断变化的，称为<strong>自适应重传算法</strong>（Adaptive Retransmission Algorithm）。</p>
+<p><strong>超时间隔加倍</strong>。每当遇到一次超时重传的时候，都会将下一次超时时间间隔设为先前值的两倍。两次超时，就说明网络环境差，不宜频繁反复发送。</p>
+<h3 id="流量控制-累计确认如何实现？"><a href="#流量控制-累计确认如何实现？" class="headerlink" title="流量控制/累计确认如何实现？"></a>流量控制/累计确认如何实现？</h3><p>在发送端和接收端都分别设有<strong>缓存</strong>，通过<strong>滑动窗口</strong>来实现。<br>发送端缓存分为：发送已确认、发送未确认、未发送可发送、未发送暂不会发送。<br>其中之所以将未发送区分为3，4部分，就是考虑到接收方的承受能力。接收方会返回一个<code>Advertised window</code>通知窗口，其大小应等于发送未确认+未发送可发送大小。超过该窗口接收端做不过来，就不能发送。</p>
+<p>接收端缓存分为：接收已确认（还未被应用层读取），还未接收但能接收（即能接收的最大工作量），还未接收也无法接收。<br><code>MaxRcvBuffer</code>：最大缓存的量。其中接收已确认是属于<code>MaxRcvBuffer</code>中一部分，还没被应用层读取，占用掉的<code>MaxRcvBuffer</code>的量A。<code>Advertised window</code>则是<code>MaxRcvBuffer</code>减去A。</p>
+<p>第二部分中，收到包可以不是顺序的，可能存在空档，只有和第一部分连续的可以马上回复，中间空着部分需要等待，即使后面已经来了。</p>
+<p><strong>流量控制：</strong><br>在对包的确认中，同时携带一个窗口大小。假设窗口不变，接收到一个最新的ack，发送端相当于窗口滑动一格，此时有更多的包可发送。如果接收方处理太慢缓存中没空间，通过确认信息修改窗口大小。可以设置成0，则发送方将暂时停止发送。<br>假设确认窗口减少了1，则发送窗口不会平行右移，仅仅左面的边右移，窗口大小减少。如果接收端一直不处理，接收已确认的包越来越多，则<code>Advertised window</code>窗口越来越小，直到0，该确认到达发送端时，发送端的窗口也调整为0，停止发送。</p>
+<p>这种情况，发送方会定时发送窗口探测数据包，看是否有机会调整窗口的大小。当接收方比较慢的时候，要防止低能窗口综合征，别空出一个字节来就赶快告诉发送方，然后马上又填满了，可以当窗口太小的时候，不更新窗口，直到达到一定大小，或者缓冲区一半为空，才更新窗口。</p>
 
             </div>
             <hr/>
@@ -623,9 +651,9 @@
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《一次升级Mysql-connector-java版本引发的血案》
+                    《TCP知识点复习》
                 </span> 由
-            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/15/yi-ci-sheng-ji-mysql-connector-java-ban-ben-yin-fa-de-xie-an/" property="cc:attributionName"
+            <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/23/tcp-zhi-shi-dian-fu-xi/" property="cc:attributionName"
                rel="cc:attributionURL">
                 icecrea
             </a> 采用
@@ -665,9 +693,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2019/10/23/tcp-zhi-shi-dian-fu-xi/">
                     <div class="card-image">
@@ -684,9 +713,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-23
-                        </span>
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-23
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
@@ -699,6 +728,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -717,18 +747,18 @@
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/15/min-gan-ci-guo-lu-suan-fa-qian-zhui-shu-pi-pei/">
+                <a href="/2019/10/15/yi-ci-sheng-ji-mysql-connector-java-ban-ben-yin-fa-de-xie-an/">
                     <div class="card-image">
                         
-                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/13.jpg" class="responsive-img" alt="敏感词过滤算法 - 前缀树匹配">
+                        <img src="https://icecrea-1300414836.file.myqcloud.com/cover/wallhaven-0prol9.png" class="responsive-img" alt="一次升级Mysql-connector-java版本引发的血案">
                         
-                        <span class="card-title">敏感词过滤算法 - 前缀树匹配</span>
+                        <span class="card-title">一次升级Mysql-connector-java版本引发的血案</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            构造前缀树对敏感词进行过滤
+                            升级Mysql-connector-java版本踩坑。注意不同版本对时间戳的判断。
                         
                     </div>
                     <div class="publish-info">
@@ -739,8 +769,8 @@
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/算法/" class="post-category" target="_blank">
-                                    算法
+                            <a href="/categories/MYSQL/" class="post-category" target="_blank">
+                                    MYSQL
                                 </a>
                             
                             
@@ -750,8 +780,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/算法/" target="_blank">
-                        <span class="chip bg-color">算法</span>
+                    <a href="/tags/MYSQL/" target="_blank">
+                        <span class="chip bg-color">MYSQL</span>
                     </a>
                     
                 </div>

@@ -438,14 +438,14 @@
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        2.4k
+                        2.6k
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        8 分
+                        9 分
                     </div>
                     
                 
@@ -506,13 +506,13 @@ insert into t(id, k) values(1,1),(2,2);</code></pre><p><img src="https://icecrea
 <p>除了 update 语句外，select 语句如果加锁，也是当前读。<br>所以如果把事务 A 的查询语句 <code>select * from t where id=1</code>修改一下，加上 <code>lock in share mode</code> 或 <code>for update</code>，也都可以读到版本号是 101 的数据，返回的 k 的值是 3。下面这两个 select 语句，就是分别加了读锁（S 锁，共享锁）和写锁（X 锁，排他锁）。</p>
 <pre><code>mysql&gt; select k from t where id=1 lock in share mode;
 mysql&gt; select k from t where id=1 for update;</code></pre><h3 id="事务常见问题"><a href="#事务常见问题" class="headerlink" title="事务常见问题"></a>事务常见问题</h3><ul>
-<li><p>更新丢失（Lost Update）<br>原因：当多个事务选择同一行操作，并且都是基于最初选定的值，由于每个事务都不知道其他事务的存在，就会发生更新覆盖的问题。类比github提交冲突。</p>
+<li><p>更新丢失（Lost Update）<br>当多个事务选择同一行操作，并且都是基于最初选定的值，由于每个事务都不知道其他事务的存在，就会发生更新覆盖的问题。类比github提交冲突。</p>
 </li>
-<li><p>脏读（Dirty Reads）<br>原因：事务A读取了事务B已经修改但尚未提交的数据。若事务B回滚数据，事务A的数据存在不一致性的问题。</p>
+<li><p>脏读（Dirty Reads）<br>事务A读取了事务B已经修改但尚未提交的数据。若事务B回滚数据，事务A的数据存在不一致性的问题。</p>
 </li>
-<li><p>不可重复读（Non-Repeatable Reads）<br>原因：事务A第一次读取最初数据，第二次读取事务B已经提交的修改或删除数据。导致两次读取数据不一致。不符合事务的隔离性。</p>
+<li><p>不可重复读（Non-Repeatable Reads）<br>事务A第一次读取最初数据，第二次读取事务B已经提交的修改或删除数据。导致两次读取数据不一致。不符合事务的隔离性。</p>
 </li>
-<li><p>幻读（Phantom Reads）<br>原因：事务A根据相同条件第二次查询到事务B提交的新增数据，两次数据结果集不一致。不符合事务的隔离性。</p>
+<li><p>幻读（Phantom Reads）<br>事务A根据相同条件第二次查询到事务B提交的新增数据，两次数据结果集不一致。不符合事务的隔离性。<br>幻读指的是一个事务在前后两次查询同一个范围的时候，后一次查询看到了前一次查询没有看到的行。</p>
 <table>
 <thead>
 <tr>
@@ -552,6 +552,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><h3 id="事务常�
 <p><strong>Q: RR，RC能解决脏读问题么？</strong><br>A: 可以，脏读指读取了其它事务已修改未提交的数据。RR与RR的实现都依赖一致性视图，区别是生成的时机不同。一个数据版本对一个事务视图来说，除了自己的更新可见，版本未提交或版本在视图创建之后提交，这两种情况均不可见。所以不会读到其它事务未提交数据。</p>
 <p><strong>Q: RR如何解决不可重复读问题？</strong><br>A: 不可重复读指两次读取数据不一致。在可重复读隔离级别下，只需要在事务开始的时候创建一致性视图，之后事务里的其他查询都共用这个一致性视图。</p>
 <p><strong>Q：事务的可重复读的能力是怎么实现的？</strong><br>可重复读的核心就是一致性读（consistent read）；而事务更新数据的时候，只能用当前读。如果当前的记录的行锁被其他事务占用的话，就需要进入锁等待。</p>
+<p><strong>Q：可重复读会有幻读吗？</strong><br>幻读指的是一个事务在前后两次查询同一个范围的时候，后一次查询看到了前一次查询没有看到的行。可重复读隔离级别下，普通的查询是快照读，是不会看到别的事务插入的数据的。因此，幻读在“当前读”下才会出现。注意：幻读仅专指“新插入的行”。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>InnoDB 的行数据有多个版本，每个数据版本有自己的 row trx_id，每个事务或者语句有自己的一致性视图。普通查询语句是一致性读，一致性读会根据 row trx_id 和一致性视图确定数据版本的可见性。<br>对于可重复读，查询只承认在事务启动前就已经提交完成的数据；<br>对于读提交，查询只承认在语句启动前就已经提交完成的数据；</p>
 <p>参考：<br>丁奇：Mysql实战45讲</p>
 
@@ -967,7 +968,7 @@ mysql&gt; select k from t where id=1 for update;</code></pre><h3 id="事务常�
 
             
             &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
-            <span class="white-color">17.7k</span>
+            <span class="white-color">20.3k</span>
             
 
             <br>
